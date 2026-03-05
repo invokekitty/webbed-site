@@ -140,7 +140,8 @@ button:hover {
 
 .friendlink > img {
     width: auto;
-    max-height: 55px;
+    max-height: 31px;
+    height: 31px;
 }
 
 .friendlink {
