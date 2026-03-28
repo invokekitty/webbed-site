@@ -198,6 +198,7 @@ ul.no-dot {
 }
 
 .backgrounded {
+    padding: 15px;
     background-color: rgba(205, 214, 244, 0.2);
 }
 
