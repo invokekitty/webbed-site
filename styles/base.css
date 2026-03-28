@@ -197,6 +197,10 @@ ul.no-dot {
     display: block;
 }
 
+.backgrounded {
+    background-color: rgba(205, 214, 244, 0.2);
+}
+
 @media(min-width: 1200px) {
     .container {
         max-width: 810px;
