@@ -147,6 +147,7 @@ button:hover {
 .friendlink {
     vertical-align: middle;
     margin-right: .3rem;
+    text-decoration: none !important;
 }
 
 ul.no-dot {
