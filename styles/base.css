@@ -200,9 +200,7 @@ ul.no-dot {
 
 .backgrounded {
     padding: 20px;
-    background-color: rgba(205, 214, 244, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(205, 214, 244, 0.12);
 }
 
 
