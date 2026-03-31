@@ -1,0 +1,26 @@
+@font-face {
+    font-family: 'waffle';
+    src: url(waffle-traced.ttf) format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+.icon {
+    display: inline-block;
+    font-family: 'waffle';
+    line-height: 1;
+    font-weight: normal;
+    font-style: normal;
+    text-rendering: geometricPrecision;
+    -moz-osx-font-smoothing: auto;
+    -webkit-font-smoothing: none;
+}
+
+.i-music:before {
+    content: '';
+}
+
+.i-photo:before {
+    content: '';
+}
