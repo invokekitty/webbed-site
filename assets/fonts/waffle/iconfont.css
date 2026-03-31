@@ -81,6 +81,14 @@
     content: '';
 }
 
-.i-arch-btw:before {
+.i-use-arch-btw:before {
     content: '';
+}
+
+.i-cog:before {
+    content: '';
+}
+
+.i-drop:before, .i-flame-trust:before {
+    content: '';
 }
