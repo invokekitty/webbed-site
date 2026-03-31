@@ -114,8 +114,8 @@ button:hover {
 }
 
 .monospace {
-    font-family: ZedPlexMono, monospace;
-    font-weight: lighter;
+    font-family: Lilex, monospace;
+    /*font-weight: lighter;*/
 }
 
 .fancy {
