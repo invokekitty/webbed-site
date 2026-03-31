@@ -24,3 +24,43 @@
 .i-photo:before {
     content: '';
 }
+
+.i-cat:before {
+    content: '';
+}
+
+.i-arch:before {
+    content: '';
+}
+
+.i-note:before {
+    content: '';
+}
+
+.i-coffee:before {
+    content: '';
+}
+
+.i-heart:before {
+    content: '';
+}
+
+.i-heart-small:before {
+    content: '';
+}
+
+.i-sourcecode:before {
+    content: '';
+}
+
+.i-updoot:before {
+    content: '';
+}
+
+.i-downdoot:before {
+    content: '';
+}
+
+.i-social:before {
+    content: '';
+}
