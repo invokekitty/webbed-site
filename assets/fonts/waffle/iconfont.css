@@ -92,3 +92,7 @@
 .i-drop:before, .i-flame-trust:before {
     content: '';
 }
+
+.i-shopping-cart-i-think, .i-anvil-trust:before {
+    content: '';
+}
