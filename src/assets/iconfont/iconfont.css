@@ -1,0 +1,98 @@
+@font-face {
+    font-family: 'waffle';
+    src: url(waffle-traced.ttf) format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+.icon {
+    display: inline-block;
+    font-family: 'waffle';
+    line-height: 1;
+    font-weight: normal;
+    font-style: normal;
+    text-rendering: geometricPrecision;
+    -moz-osx-font-smoothing: auto;
+    -webkit-font-smoothing: none;
+}
+
+.i-music:before {
+    content: '';
+}
+
+.i-photo:before {
+    content: '';
+}
+
+.i-cat:before {
+    content: '';
+}
+
+.i-arch:before {
+    content: '';
+}
+
+.i-note:before {
+    content: '';
+}
+
+.i-coffee:before {
+    content: '';
+}
+
+.i-heart:before {
+    content: '';
+}
+
+.i-heart-small:before {
+    content: '';
+}
+
+.i-sourcecode:before {
+    content: '';
+}
+
+.i-updoot:before {
+    content: '';
+}
+
+.i-downdoot:before {
+    content: '';
+}
+
+.i-social:before {
+    content: '';
+}
+
+.i-group:before {
+    content: '';
+}
+
+.i-quoip:before {
+    content: '';
+}
+
+.i-double-check:before {
+    content: '';
+}
+
+.i-city:before {
+    content: '';
+}
+
+.i-use-arch-btw:before {
+    content: '';
+}
+
+.i-cog:before {
+    content: '';
+}
+
+.i-drop:before, .i-flame-trust:before {
+    content: '';
+}
+
+.i-shopping-cart-i-think, .i-anvil-trust:before {
+    content: '';
+}

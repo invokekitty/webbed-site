@@ -1,0 +1,80 @@
+---
+const pages: { title: string, route: string }[] = [
+  { title: "Home", route: "/" },
+  { title: "Pronouns n Stuff", route: "/me" },
+  { title: "Projects", route: "/projects" }
+]
+const { route, fullWidth } = Astro.props
+---
+
+<style lang="scss">
+@use '/src/styles/colors.scss';
+@use '/src/styles/main.scss';
+
+.navbar, .container {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-self: flex-start;
+    align-items: center;
+    @include main.tiny5;
+    @media (min-width: 500px) {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        width: auto;
+    }
+}
+
+.nav-menu {
+    display: none;
+}
+
+label[for="nav-check"] {
+    display: block;
+    margin-right: auto;
+    font-size: 3rem;
+    padding: .25rem;
+    cursor: pointer;
+    @media (min-width: 500px) {
+        display: none;
+    }
+}
+
+#nav-check {
+    display: none;
+}
+
+#nav-check:checked ~ .nav-menu {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.nav-item, .nav-item:visited {
+    color: var(--text);
+
+    padding: 1rem 2rem .75rem 2rem;
+    border-bottom: .25rem dashed transparent;
+    transition: border-color 0.2s ease-in-out;
+    text-wrap: nowrap;
+}
+
+.nav-item.active {
+    color: colors.$mauve !important;
+}
+
+.nav-item:hover {
+    text-decoration: none !important;
+    color: colors.$text;
+    border-color: colors.$text;
+}
+</style>
+
+<div class="navbar">
+    <div class={ fullWidth as boolean ? "container-full" : "container" }>
+        
+    </div>
+</div>

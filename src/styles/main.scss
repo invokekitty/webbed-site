@@ -1,0 +1,9 @@
+@charset 'utf-8';
+
+@mixin tiny5 {
+    font-family: var(--font-tiny5), sans-serif;
+    font-size: large;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: none;
+}

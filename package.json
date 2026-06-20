@@ -9,9 +9,22 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "generate-types": "wrangler types"
   },
   "dependencies": {
-    "astro": "^6.4.7"
+    "@astrojs/cloudflare": "^13.7.0",
+    "@astrojs/compiler-rs": "^0.2.2",
+    "@astrojs/mdx": "^6.0.3",
+    "astro": "^6.4.7",
+    "mdx": "^0.3.1",
+    "scss": "^0.2.4",
+    "wrangler": "^4.103.0"
+  },
+  "overrides": {
+    "vite": "^7"
+  },
+  "devDependencies": {
+    "sass-embedded": "^1.100.0"
   }
 }
