@@ -75,6 +75,10 @@ label[for="nav-check"] {
 
 <div class="navbar">
     <div class={ fullWidth as boolean ? "container-full" : "container" }>
-        
+        {
+          pages.map(page => {
+            (<a class="nav-item" href=`/${page.route}`>page.title</a>)
+          })
+        }
     </div>
 </div>
