@@ -1,12 +1,21 @@
 ---
-const { areas } = Astro.props
+const { areas, small } = Astro.props
 
 ---
-<style define:vars={{ areas: areas.map((s: string) => `\"${s}\"`).join("\n") }}>
+<style define:vars={
+  {
+    areaData: areas.map((s: string) => `\"${s}\"`).join("\n"),
+    smallData: (small ?? areas).map((s: string) => `\"${s}\"`).join("\n")
+  }
+}>
     div.grid {
         display: grid;
-        grid-template-areas: var(--areas);
+        grid-template-areas: var(--areaData);
         gap: 1rem;
+
+        @media (max-width: 530px) {
+            grid-template-areas: var(--smallData);
+        }
     }
 </style>
 
