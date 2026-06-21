@@ -20,21 +20,21 @@ export default defineConfig({
       name: "Roboto Slab",
       cssVariable: "--font-roboto-slab",
       formats: ["woff2", "woff", "ttf"],
-      fallbacks: ["serif"]
+      fallbacks: ["monospace"]
     },
     {
       provider: fontProviders.fontsource(),
       name: "Tiny5",
       cssVariable: "--font-tiny5",
-      formats: ["woff2", "woff", "ttf"],
-      fallbacks: ["monospace"]
+      formats: ["ttf"],
+      fallbacks: ["sans-serif"]
     },
     {
       provider: fontProviders.fontsource(),
       name: "Lilex",
       cssVariable: "--font-lilex",
       formats: ["woff2", "woff", "ttf"],
-      fallbacks: ["monspace"]
+      fallbacks: ["monospace"]
     },
     {
       provider: fontProviders.local(),
@@ -43,7 +43,7 @@ export default defineConfig({
       formats: ["ttf"],
       options: {
         variants: [{
-          src: ['./src/assets/iconfont/waffle-traced.ttf'],
+          src: ['./src/assets/fonts/waffle-traced.ttf'],
           weight: 'normal',
           style: 'normal',
           display: 'swap'

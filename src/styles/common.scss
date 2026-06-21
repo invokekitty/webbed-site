@@ -1,17 +1,14 @@
 @use 'colors.scss';
 @forward 'colors.scss';
 
-@mixin tiny5 {
-    font-family: var(--font-tiny5), sans-serif;
-    text-rendering: optimizeLegibility;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: none;
-}
-
 @mixin geometric {
     text-rendering: geometricPrecision;
     -moz-osx-font-smoothing: auto;
     -webkit-font-smoothing: none;
+}
+
+@mixin tiny5 {
+    font-family: var(--font-tiny5), sans-serif;
 }
 
 @mixin flex($direction: column, $justify: flex-start, $align: stretch) {
@@ -25,12 +22,14 @@
     border: $width dashed $color;
 }
 
-.container {
+.container, .container-full {
     margin-left: auto;
     margin-right: auto;
     padding-left: 15px;
     padding-right: 15px;
+}
 
+.container {
     @media (min-width: 1200px) {
         max-width: 810px;
     }
@@ -46,4 +45,9 @@
 
 .fancy {
     @include tiny5;
+}
+
+.box {
+    padding: 15px;
+    @include border;
 }

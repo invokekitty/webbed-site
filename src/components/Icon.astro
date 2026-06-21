@@ -23,14 +23,7 @@ const icons: { [name: string]: string } = {
 }
 
 const { name, ...attrs } = Astro.props;
-
-let iconStyle = `
-    .icon[data-icon=${name}]:before {
-        content: '${icons[name]}';
-    }
-`
 ---
-<style is:global set:html={iconStyle} />
 <style lang="scss">
 @use '../styles/common.scss';
 
@@ -43,4 +36,4 @@ let iconStyle = `
     @include common.geometric;
 }
 </style>
-<span class="icon" data-icon={name} {...attrs}></span>
+<span class="icon" {...attrs}>{icons[name]}</span>

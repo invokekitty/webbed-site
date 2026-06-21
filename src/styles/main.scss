@@ -1,6 +1,5 @@
 @charset 'utf-8';
 @use 'common.scss';
-@forward 'common.scss';
 
 * {
     box-sizing: border-box;
@@ -24,4 +23,31 @@ a, a:visited {
         color: #b494e1;
         text-decoration: underline;
     }
+}
+
+ul.no-decoration {
+    list-style: none;
+    padding-left: 0;
+}
+
+[data-tooltip] {
+    position: relative;
+    &:not([data-tooltip=""]):hover {
+        &:after {
+            position: absolute;
+            left: 50%;
+            top: -.15rem;
+            transform: translate(-50%, -100%);
+            border-radius: 2px;
+            background-color: common.$base;
+            color: common.$text;
+            font-size: small;
+            padding: 0.35rem;
+            font-weight: bold;
+            text-wrap: nowrap;
+            z-index: 299;
+            content: attr(data-tooltip);
+        }
+    }
+
 }

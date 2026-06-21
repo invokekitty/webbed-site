@@ -1,0 +1,22 @@
+---
+const { href, img, alt, ...attrs } = Astro.props
+---
+
+<style>
+img {
+    width: auto;
+    max-height: 38px;
+    height: 38px;
+}
+
+.friendlink {
+    vertical-align: middle;
+    margin-right: .3rem;
+    text-decoration: none !important;
+}
+</style>
+
+<a class="friendlink" href={href} {...attrs}>
+    <img src={img} alt={alt} />
+</a>
+

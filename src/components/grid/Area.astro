@@ -1,0 +1,7 @@
+---
+const { name, ...attrs } = Astro.props
+---
+
+<div style={`grid-area: ${name}`} {...attrs}>
+    <slot />
+</div>

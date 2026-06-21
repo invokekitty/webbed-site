@@ -69,9 +69,9 @@ label[for="nav-check"] {
 <div class="navbar">
     <div class={ fullWidth as boolean ? "container-full" : "container" }>
         {
-          pages.map(page => {
-            return (<a class="nav-item" href=`${page.route}`>{page.title}</a>)
-          })
+          pages.map(page => 
+             (<a class:list={['nav-item', { active: page.route == route }]} href=`${page.route}`>{page.title}</a>)
+          )
         }
     </div>
 </div>

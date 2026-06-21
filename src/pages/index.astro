@@ -1,11 +1,43 @@
 ---
 import Layout from "../components/Layout.astro";
-import Box from "../components/Box.astro"
 import Icon from "../components/Icon.astro"
-
+import Grid from "../components/grid/Grid.astro";
+import Area from "../components/grid/Area.astro"
+import Friendlink from "../components/Friendlink.astro";
 ---
 <Layout title="serenitie" location="/">
-    <Box>
-        meow <Icon name="drop"/>
-    </Box>
+    <Grid areas={[
+      "link main main",
+      "frens frens frens"
+    ]}>
+        <Area name="link" class="box">
+            <h3>Links to my stuff:</h3>
+            <ul class="no-decoration">
+                <li><a href="https://serenov.tumblr.com" class="fancy fg-lavender"><b style="font-size: 1.2rem">&nbsp;t</b> Tumblr</a></li>
+                <li><a href="https://www.tiktok.com/@notserenov" class="fancy fg-teal"><Icon name="note"/>Tiktok</a></li>
+                <li><a href="https://www.instagram.com/stupidcatcreacher/" class="fancy fg-peach"><Icon name="photo"/> Instagram</a></li>
+                <li><a href="https://music.apple.com/profile/sery" class="fancy fg-red"><Icon name="music"/> Apple Music</a></li>
+                <li><a href="https://codeberg.org/sery" class="fancy fg-sapphire"><Icon name="sourcecode"/> Codeberg</a></li>
+                <li><a href="https://github.com/invokekitty" class="fancy fg-text"><Icon name="cat"/> Github</a></li>
+            </ul>
+        </Area>
+        <Area name="main" class="box">
+            <h2>Welcome to sery's webbed site</h2>
+            <p>
+                Haii im sery, dumbass cat that codes and enjoys music alot.
+                You can find projects and random shit i say here :3<br>
+                <br>
+                There is supposed to be more here but this website is kinda stuck in WIP limbo so :3
+                meow :3
+            </p>
+        </Area>
+        <Area name="frens">
+            <Friendlink href="#" data-tooltip="Add me to your site :3" img="/banners/me.gif" alt="Me" />
+            <Friendlink href="https://kibbyc.at" img="/banners/riley.webp" alt="my cute catburger" />
+            <Friendlink href="https://mayaqq.dev" img="https://mayaqq.dev/assets/88x31/me.gif" alt="estrogen puppy" />
+            <Friendlink href="https://resolv.moe" img="https://resolv.moe/friends/resolv.png?v2" alt="maybe" />
+            <Friendlink href="https://dynamicdispat.ch" img="https://dynamicdispat.ch/assets/img/button.png" alt="dyn is cute and gay" />
+            <Friendlink href="https://awruff.pages.gay" img="https://awruff.pages.gay/assets/88x31.png" alt="shinyyy puppy :3" />
+        </Area>
+    </Grid>
 </Layout>

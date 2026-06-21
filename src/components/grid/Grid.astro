@@ -1,0 +1,15 @@
+---
+const { areas } = Astro.props
+
+---
+<style define:vars={{ areas: areas.map((s: string) => `\"${s}\"`).join("\n") }}>
+    div.grid {
+        display: grid;
+        grid-template-areas: var(--areas);
+        gap: 1rem;
+    }
+</style>
+
+<div class="grid">
+    <slot />
+</div>

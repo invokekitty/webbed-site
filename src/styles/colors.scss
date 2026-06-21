@@ -23,3 +23,38 @@ $mayasurface: #313244;
 $base: #1e1e2e;
 $mantle: #181825;
 $crust: #11111b;
+
+$colors: (
+    "rosewater": $rosewater,
+    "flamingo": $flamingo,
+    "pink": $pink,
+    "mauve": $mauve,
+    "red": $red,
+    "maroon": $maroon,
+    "peach": $peach,
+    "yellow": $yellow,
+    "green": $green,
+    "teal": $teal,
+    "sky": $sky,
+    "sapphire": $sapphire,
+    "blue": $blue,
+    "lavender": $lavender,
+    "text": $text,
+    "subtext": $subtext,
+    "subtexter": $subtexter,
+    "surface": $surface,
+    "subsurface": $subsurface,
+    "mayasurface": $mayasurface,
+    "base": $base,
+    "mantle": $mantle,
+    "crust": $crust
+);
+
+@each $name, $color in $colors {
+    .fg-#{$name} {
+        color: $color !important;
+    }
+    .bg-#{$name} {
+        background-color: $color !important;
+    }
+}
