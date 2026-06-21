@@ -6,26 +6,29 @@ const { icon, tooltip, ...attrs } = Astro.props
     @use '../styles/common.scss' as *;
     ul.icon-list {
         @extend .no-decoration;
+        > li {
+            position: relative;
+            padding-left: 1.4rem;
+            > .icon {
+                position: absolute;
+                left: 0;
+                bottom: 50%;
+                transform: translate(0, 55%);
+            }
+        }
     }
-    ul.icon-list > li > .icon {
-        position: absolute;
-        left: 0;
-        bottom: 50%;
-        transform: translate(0, 50%);
-    }
-    ul.icon-list > li {
-        position: relative;
-        padding-left: 1.4rem;
-    }
+
     ul:not(.icon-list) > li[data-icon-list] > .icon {
         display: none;
     }
 </style>
 <style>
     b {
+        display: inline-block;
         font-family: var(--font-tiny5);
         font-size: 1.2rem;
         left: 1px !important;
+        line-height: 1;
     }
 </style>
 
