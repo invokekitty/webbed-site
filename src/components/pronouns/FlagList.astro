@@ -1,0 +1,16 @@
+---
+const attrs = Astro.props
+---
+
+<style lang="scss">
+@use '../../styles/common.scss' as *;
+
+ul.flag-list {
+    @extend .no-decoration;
+    @include flex($direction: row, $justify: center);
+    flex-wrap: wrap;
+}
+</style>
+<ul class="flag-list" {...attrs}>
+    <slot />
+</ul>

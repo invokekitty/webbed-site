@@ -25,11 +25,6 @@ a, a:visited {
     }
 }
 
-ul.no-decoration {
-    list-style: none;
-    padding-left: 0;
-}
-
 [data-tooltip] {
     position: relative;
     &:not([data-tooltip=""]):hover {
@@ -42,6 +37,8 @@ ul.no-decoration {
             background-color: common.$base;
             color: common.$text;
             font-size: small;
+            font-family: var(--font-roboto-slab);
+            @include common.smooth;
             padding: 0.35rem;
             font-weight: bold;
             text-wrap: nowrap;

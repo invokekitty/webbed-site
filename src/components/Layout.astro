@@ -44,6 +44,7 @@ const { title, location } = Astro.props
                 padding-top: .5rem;
             }
 		</style>
+		<slot name="head-extra" />
     </head>
     <body dir="ltr">
         <Navbar route={location} />

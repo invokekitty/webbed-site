@@ -3,8 +3,16 @@
 
 @mixin geometric {
     text-rendering: geometricPrecision;
+    font-smooth: never;
     -moz-osx-font-smoothing: auto;
     -webkit-font-smoothing: none;
+}
+
+@mixin smooth {
+    text-rendering: optimizeLegibility;
+    font-smooth: auto;
+    -mox-osx-font-smoothing: greyscale;
+    -webkit-font-smoothing: auto;
 }
 
 @mixin tiny5 {
@@ -35,9 +43,19 @@
 
 .fancy {
     @include tiny5;
+    line-height: 1.2em;
 }
 
 .box {
     padding: 15px;
     @include border;
+}
+
+.no-decoration {
+    list-style: none;
+    padding-left: 0;
+}
+
+.caption {
+    margin-bottom: 0;
 }

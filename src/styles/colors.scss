@@ -51,10 +51,16 @@ $colors: (
 );
 
 @each $name, $color in $colors {
-    .fg-#{$name} {
+    [data-fg=#{$name}], [data-fg-force=#{$name}] {
         color: $color !important;
     }
-    .bg-#{$name} {
+    [data-bg=#{$name}], [data-bg-force=#{$name}] {
+        background-color: $color !important;
+    }
+    [data-fg-force=#{$name}] * {
+        color: $color !important;
+    }
+    [data-bg-force=#{$name}] * {
         background-color: $color !important;
     }
 }

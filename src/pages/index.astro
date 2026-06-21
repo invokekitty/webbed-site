@@ -4,26 +4,34 @@ import Icon from "../components/Icon.astro"
 import Grid from "../components/grid/Grid.astro";
 import Area from "../components/grid/Area.astro"
 import Friendlink from "../components/Friendlink.astro";
+import IconLi from "../components/IconLi.astro";
 ---
 <Layout title="serenitie" location="/">
     <Grid areas={[
       "link main main",
       "link frens frens"
     ]}
-    small={[ 
-      "main", 
-      "link", 
-      "frens" 
+    small={[
+      "main",
+      "link",
+      "frens"
     ]}>
         <Area name="link" class="box">
             <h3>Links to my stuff:</h3>
-            <ul class="no-decoration">
-                <li><a href="https://serenov.tumblr.com" class="fancy fg-lavender"><b style="font-size: 1.2rem">&nbsp;t</b> Tumblr</a></li>
+            <!-- <ul class="no-decoration">
+                <li><a href="https://serenov.tumblr.com" class="fancy" data-fg="peach"><b style="font-size: 1.2rem">&nbsp;t</b> Tumblr</a></li>
                 <li><a href="https://www.tiktok.com/@notserenov" class="fancy fg-teal"><Icon name="note"/>Tiktok</a></li>
                 <li><a href="https://www.instagram.com/stupidcatcreacher/" class="fancy fg-peach"><Icon name="photo"/> Instagram</a></li>
                 <li><a href="https://music.apple.com/profile/sery" class="fancy fg-red"><Icon name="music"/> Apple Music</a></li>
                 <li><a href="https://codeberg.org/sery" class="fancy fg-sapphire"><Icon name="sourcecode"/> Codeberg</a></li>
                 <li><a href="https://github.com/invokekitty" class="fancy fg-text"><Icon name="cat"/> Github</a></li>
+            </ul> -->
+            <ul class="icon-list fancy">
+                <IconLi icon="t" data-fg-force="lavender"><a href="https://serenov.tumblr.com">Tumblr</a></IconLi>
+                <IconLi icon="note" data-fg-force="teal"><a href="https://www.tiktok.com/@notserenov">Tiktok</a></IconLi>
+                <IconLi icon="photo" data-fg-force=peach><a href="https://www.instagram.com/stupidcatcreacher/">Instagram</a></IconLi>
+                <IconLi icon="music" data-fg-force="red"><a href="https://music.apple.com/profile/sery">Apple Music</a></IconLi>
+                <IconLi icon="sourcecode" data-fg-force=sapphire><a href="https://codeberg.org/sery">Codeberg</a></IconLi>
             </ul>
         </Area>
         <Area name="main" class="box">

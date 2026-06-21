@@ -1,0 +1,110 @@
+---
+export const prerender = false
+import Layout from "../components/Layout.astro";
+import Grid from "../components/grid/Grid.astro";
+import Area from "../components/grid/Area.astro";
+import FlagList from "../components/pronouns/FlagList.astro";
+import Flag from "../components/pronouns/Flag.astro";
+import IconLi from "../components/IconLi.astro";
+import Icon from "../components/Icon.astro";
+
+const age: number = Math.floor((Date.now() - Date.UTC(2005, 3, 5)) / 31536000000)
+const month: number = new Date(Date.now()).getMonth()
+const timezone: "CEST" | "CET" = (month >= 4 && month <= 10) ? "CEST" : "CET"
+
+const love = { icon: 'heart', 'data-fg': 'pink' }
+const like = { icon: 'updoot' }
+const close = { icon: 'group', 'data-fg': 'red' }
+const joke = { icon: 'quoip', 'data-fg': 'yellow' }
+const hate = { icon: 'downdoot', 'data-fg': 'subtexter' }
+---
+
+<style lang="scss">
+@use '../styles/common.scss' as *;
+
+.legend-content {
+    padding-left: 0;
+    list-style: none;
+    @include flex($direction: row, $justify: center);
+    flex-wrap: wrap;
+    color: $subtext;
+    margin-bottom: 0;
+    margin-top: 1rem;
+
+    & > li {
+        display: block;
+        padding: 0.25rem;
+        margin-left: .5rem;
+        margin-right: .5rem;
+        flex: 0 1 content;
+    }
+}
+</style>
+
+<Layout title="serenit.ie's pronouns" location="/me">
+    <div class="box">
+        <Grid areas={[
+          "title title title title title title",
+          "desc desc desc flags flags flags",
+          "names names prns prns compl compl",
+          "legend legend legend legend legend legend"
+        ]}, small={["title", "flags", "desc", "names", "prns", "compl", "legend"]}>
+            <Area name="title">
+                <h1 class="caption">Serenity</h1>
+            </Area>
+            <Area name="flags">
+                <FlagList>
+                    <Flag name="non-binary" tooltip="non biney">Non Binary</Flag>
+                    <Flag name="demi" tooltip="No fuck me pls">Demisexual</Flag>
+                    <Flag name="polyamogus" tooltip="Poly amog">Polyamorous</Flag>
+                </FlagList>
+            </Area>
+            <Area name="desc">
+                <p>
+                    Dumbass developer, guitarist and linux enjoyer<br>
+                    Im a girl in the sense that im not
+                    <br><br>
+                    Age: <b>{age}</b> <br>
+                    Time zone: <b>{timezone}</b>
+                </p>
+            </Area>
+            <Area name="names" id="names">
+                <h2>My Names :3</h2>
+                <ul class="icon-list">
+                    <IconLi {...love} tooltip="My main Name :3">Serenity/Serena/Sery</IconLi>
+                    <IconLi {...love}>Lucyna/Lucy</IconLi>
+                </ul>
+            </Area>
+            <Area name="prns" id="pronouns">
+                <h2>My Pronouns :3</h2>
+                <ul class="icon-list">
+                    <IconLi {...love} tooltip="PLEASE USE ALWAYSSS">they/them</IconLi>
+                    <IconLi {...like} tooltip="yaaah :3">she/her</IconLi>
+                    <IconLi {...like} tooltip="is also cools">it/its</IconLi>
+                </ul>
+            </Area>
+            <Area name="compl" id="words">
+                <h2>Refer to me :3</h2>
+                <ul class="icon-list">
+                    <IconLi {...love} tooltip="LOVE THIS">Girl</IconLi>
+                    <IconLi {...love} tooltip="MRRRAAAWW">Cat</IconLi>
+                    <IconLi {...love} tooltip="LOVE THIS TOO !!">Boy</IconLi>
+                    <IconLi {...close} tooltip="only if ur mine <3">Girlfriend</IconLi>
+                    <IconLi {...close} tooltip="ur a faggot">Boyfriend</IconLi>
+                    <IconLi {...close} tooltip="also only if mine">Partner</IconLi>
+                    <IconLi {...joke} tooltip="Only jokingly">Woman</IconLi>
+                    <IconLi {...hate} tooltip="will stab u with a bottle opener">Man</IconLi>
+                </ul>
+            </Area>
+            <Area name="legend">
+                <ul class="legend-content">
+                    <li><Icon name=heart /> LOVE THIS SM !!!!</li>
+                    <li><Icon name=updoot /> i like this</li>
+                    <li><Icon name=quoip /> Only jokingly</li>
+                    <li><Icon name=group /> Only for close people</li>
+                    <li><Icon name=downdoot /> Nuh uh</li>
+                </ul>
+            </Area>
+        </Grid>
+    </div>
+</Layout>

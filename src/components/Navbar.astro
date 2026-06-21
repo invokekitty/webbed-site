@@ -19,10 +19,6 @@ const { route, fullWidth } = Astro.props
 
 .nav-menu {
     display: none;
-    @media (min-width: 500px) {
-        @include common.flex($direction: row);
-        width: auto;
-    }
 }
 
 label[for="nav-check"] {
@@ -44,6 +40,13 @@ label[for="nav-check"] {
     display: flex;
     flex-direction: column;
     width: 100%;
+}
+
+.nav-menu {
+    @media (min-width: 500px) {
+        @include common.flex($direction: row);
+        width: auto;
+    }
 }
 
 .nav-item, .nav-item:visited {
