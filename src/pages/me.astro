@@ -8,6 +8,8 @@ import Flag from "../components/pronouns/Flag.astro";
 import IconLi from "../components/IconLi.astro";
 import Icon from "../components/Icon.astro";
 
+import { demisexual, nonbinary, polyamorous } from '../assets/images/flags/flags'
+
 const age: number = Math.floor((Date.now() - Date.UTC(2005, 3, 5)) / 31536000000)
 const month: number = new Date(Date.now()).getMonth()
 const timezone: "CEST" | "CET" = (month >= 4 && month <= 10) ? "CEST" : "CET"
@@ -54,9 +56,9 @@ const hate = { icon: 'downdoot', 'data-fg': 'subtexter' }
             </Area>
             <Area name="flags">
                 <FlagList>
-                    <Flag name="non-binary" tooltip="non biney">Non Binary</Flag>
-                    <Flag name="demi" tooltip="No fuck me pls">Demisexual</Flag>
-                    <Flag name="polyamogus" tooltip="Poly amog">Polyamorous</Flag>
+                    <Flag src={nonbinary} tooltip="non biney">Non Binary</Flag>
+                    <Flag src={demisexual} tooltip="No fuck me pls, with some exceptions">Demisexual</Flag>
+                    <Flag src={polyamorous} tooltip="Poly amog">Polyamorous</Flag>
                 </FlagList>
             </Area>
             <Area name="desc">

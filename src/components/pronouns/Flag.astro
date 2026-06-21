@@ -1,7 +1,7 @@
 ---
 import { Image } from "astro:assets";
 
-const { name, tooltip, ...attrs } = Astro.props;
+const { src, tooltip, ...attrs } = Astro.props;
 ---
 
 <style lang="scss">
@@ -18,9 +18,10 @@ li {
     border-radius: 2px;
     vertical-align: bottom;
     height: 1.1rem;
+    width: auto;
 }
 </style>
 <li {...attrs}>
-    <Image width=29.4 height=17.6 class=flag src={`/src/assets/images/flags/${name}.png`} alt={name} data-tooltip={tooltip} />
+    <Image width=107 height=64 class=flag quality=high src={src} alt={tooltip} data-tooltip={tooltip} />
     <span><slot /></span>
 </li>
