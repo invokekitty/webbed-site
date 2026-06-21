@@ -1,0 +1,10 @@
+<style lang="scss">
+@use '../styles/common.scss' as *;
+.box {
+    padding: 15px;
+    @include border;
+}
+</style>
+<div class="box">
+    <slot />
+</div>

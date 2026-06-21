@@ -1,0 +1,46 @@
+---
+const icons: { [name: string]: string } = {
+  music: "",
+  photo: "",
+  cat: "",
+  arch: "",
+  note: "",
+  coffee: "",
+  heart: "",
+  'heart-small': "",
+  sourcecode: "",
+  updoot: "",
+  downdoot: "",
+  social: "",
+  group: "",
+  quoip: "",
+  'double-check': "",
+  city: "",
+  'i-use-arch-btw': "",
+  cog: "",
+  drop: "",
+  'shopping-cart-i-think': ""
+}
+
+const { name, ...attrs } = Astro.props;
+
+let iconStyle = `
+    .icon[data-icon=${name}]:before {
+        content: '${icons[name]}';
+    }
+`
+---
+<style is:global set:html={iconStyle} />
+<style lang="scss">
+@use '../styles/common.scss';
+
+.icon {
+    display: inline-block;
+    font-family: var(--font-waffle);
+    line-height: 1;
+    font-weight: normal;
+    font-style: normal;
+    @include common.geometric;
+}
+</style>
+<span class="icon" data-icon={name} {...attrs}></span>

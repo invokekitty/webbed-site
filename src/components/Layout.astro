@@ -1,5 +1,7 @@
 ---
-
+import "../styles/main.scss"
+import { Font } from "astro:assets"
+import Navbar from "./Navbar.astro"
 const { title, location } = Astro.props
 ---
 
@@ -8,9 +10,48 @@ const { title, location } = Astro.props
         <title>{title}</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        
+		<meta name="generator" content={Astro.generator} />
+		<Font cssVariable="--font-tiny5"/>
+		<Font cssVariable="--font-lilex"/>
+		<Font cssVariable="--font-roboto-slab"/>
+		<Font cssVariable="--font-waffle"/>
+		<link rel="icon" href="/favicon.ico" />
+		<style lang="scss">
+		    @use '../styles/common.scss' as *;
+            body {
+                margin: 0;
+                min-height: 100vh;
+                color: $text;
+                background-color: $crust;
+                font-family: var(--font-roboto-slab);
+                @include flex;
+            }
+
+            .content {
+                margin-top: 3rem;
+
+                @media (min-height: 450px) {
+                    margin-top: 6rem;
+                }
+            }
+
+            .footer {
+                margin-top: auto;
+                padding-top: .5rem;
+            }
+		</style>
     </head>
     <body dir="ltr">
-        
+        <Navbar route={location} />
+        <div class="content">
+            <div class="container">
+                <slot />
+            </div>
+        </div>
+        <div class="footer">
+            <div class="container-full">
+                <small class="fancy">background by <a href="https://www.deviantart.com/pixeljeff">@pixeljeff on deviantart</a></small>
+            </div>
+        </div>
     </body>
 </html>

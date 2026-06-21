@@ -1,0 +1,49 @@
+@use 'colors.scss';
+@forward 'colors.scss';
+
+@mixin tiny5 {
+    font-family: var(--font-tiny5), sans-serif;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: none;
+}
+
+@mixin geometric {
+    text-rendering: geometricPrecision;
+    -moz-osx-font-smoothing: auto;
+    -webkit-font-smoothing: none;
+}
+
+@mixin flex($direction: column, $justify: flex-start, $align: stretch) {
+    display: flex;
+    flex-direction: $direction;
+    justify-content: $justify;
+    align-items: $align;
+}
+
+@mixin border($width: 0.5rem, $color: colors.$text) {
+    border: $width dashed $color;
+}
+
+.container {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+
+    @media (min-width: 1200px) {
+        max-width: 810px;
+    }
+
+    @media (min-width: 1440px) {
+        max-width: 930px;
+    }
+
+    @media (min-width: 1600px) {
+        max-width: 1050px;
+    }
+}
+
+.fancy {
+    @include tiny5;
+}
