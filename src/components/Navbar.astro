@@ -89,7 +89,7 @@ const { route } = Astro.props
     <label class="navbar-text" for="nav-check"><Icon style="font-size:75%" name=menu />serenit.ie</label>
     <nav class="nav-menu">
         {pages.map(page =>
-                <a class:list={['nav-item', { active: page.route == route }]} href={page.route}>
+                <a data-astro-prefetch class:list={['nav-item', { active: page.route == route }]} href={page.route}>
                    {page.title}
                 </a>
             )
