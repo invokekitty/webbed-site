@@ -1,5 +1,7 @@
 ---
-const { areas, small } = Astro.props
+import { undefined } from "astro:schema"
+
+const { areas, small, equalColumns, equalRows } = Astro.props
 
 ---
 <style lang="scss" define:vars={
@@ -12,14 +14,21 @@ const { areas, small } = Astro.props
         display: grid;
         grid-template-areas: var(--areaData);
         gap: 1rem;
-        grid-auto-columns: 1fr;
 
         @media (max-width: 530px) {
             grid-template-areas: var(--smallData);
         }
+
+        &.auto-rows {
+            grid-auto-rows: 1fr;
+        }
+
+        &.auto-columns {
+            grid-auto-columns: 1fr;
+        }
     }
 </style>
 
-<div class="grid">
+<div class:list={[ "grid", { 'auto-rows': equalRows }, { 'auto-columns': equalColumns } ]}>
     <slot />
 </div>
