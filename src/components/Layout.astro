@@ -52,11 +52,11 @@ const { title, location } = Astro.props
     <body dir="ltr">
         <Background />
         <Navbar route={location} />
-        <div class="content">
+        <main class="content">
             <div class="container">
                 <slot />
             </div>
-        </div>
+        </main>
         <footer class="footer">
             <div class="container-full">
                 <small class="fancy">background by <a href="https://www.deviantart.com/pixeljeff">@pixeljeff on deviantart</a></small>
