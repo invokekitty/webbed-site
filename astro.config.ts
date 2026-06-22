@@ -13,7 +13,7 @@ export default defineConfig({
   build: {
     format: "preserve"
   },
-  prefetch: false,
+  prefetch: true,
   fonts: [
     {
       provider: fontProviders.fontsource(),
