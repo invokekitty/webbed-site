@@ -2,6 +2,8 @@
 import "../styles/main.scss"
 import { Font } from "astro:assets"
 import Navbar from "./Navbar.astro"
+import Background from "./Background.astro"
+import Oneko from "./Oneko.astro"
 const { title, location } = Astro.props
 ---
 
@@ -22,12 +24,13 @@ const { title, location } = Astro.props
                 margin: 0;
                 min-height: 100vh;
                 color: $text;
-                background-color: $crust;
+                background-color: #1a1443;
                 font-family: var(--font-roboto-slab);
-                background-image: url("../assets/images/bg.gif");
-                background-attachment: fixed;
-                background-size: cover;
-                background-position: 13%;
+                //background-image: url("../assets/images/bg.webp");
+                //image-rendering: crisp-edges;
+                //background-attachment: fixed;
+                //background-size: cover;
+                //background-position: 13%;
                 @include flex;
             }
 
@@ -47,6 +50,7 @@ const { title, location } = Astro.props
 		<slot name="head-extra" />
     </head>
     <body dir="ltr">
+        <Background />
         <Navbar route={location} />
         <div class="content">
             <div class="container">
@@ -58,5 +62,6 @@ const { title, location } = Astro.props
                 <small class="fancy">background by <a href="https://www.deviantart.com/pixeljeff">@pixeljeff on deviantart</a></small>
             </div>
         </div>
+        <Oneko />
     </body>
 </html>

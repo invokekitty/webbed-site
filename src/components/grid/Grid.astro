@@ -2,7 +2,7 @@
 const { areas, small } = Astro.props
 
 ---
-<style define:vars={
+<style lang="scss" define:vars={
   {
     areaData: areas.map((s: string) => `\"${s}\"`).join("\n"),
     smallData: (small ?? areas).map((s: string) => `\"${s}\"`).join("\n")
