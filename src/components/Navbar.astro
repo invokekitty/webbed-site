@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro'
 const pages: { title: string, route: string }[] = [
   { title: "Home", route: "/" },
   { title: "Pronouns n Stuff", route: "/me" },
@@ -19,6 +20,11 @@ const { route, fullWidth } = Astro.props
 
 .nav-menu {
     display: none;
+
+    @media (min-width: 500px) {
+        @include common.flex($direction: row);
+        width: auto;
+    }
 }
 
 label[for="nav-check"] {
@@ -34,18 +40,19 @@ label[for="nav-check"] {
 
 #nav-check {
     display: none;
-}
 
-#nav-check:checked ~ .nav-menu {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
+    &:checked {
+        @media(max-width: 500px) {
+            ~ .nav-menu {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+            }
+        }
 
-.nav-menu {
-    @media (min-width: 500px) {
-        @include common.flex($direction: row);
-        width: auto;
+        ~ [for="nav-check"] > .icon {
+            color: common.$mauve;
+        }
     }
 }
 
@@ -72,7 +79,7 @@ label[for="nav-check"] {
 <div class="navbar">
     <div class={ fullWidth as boolean ? "container-full" : "container" }>
         <input id="nav-check" type="checkbox" />
-        <label for="nav-check">serenit.ie</label>
+        <label for="nav-check"><Icon style="font-size:75%" name=menu /> serenit.ie</label>
         <div class="nav-menu">
         {
           pages.map(page =>
