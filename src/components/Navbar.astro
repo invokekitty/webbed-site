@@ -5,13 +5,13 @@ const pages: { title: string, route: string }[] = [
   { title: "Pronouns n Stuff", route: "/me" },
   { title: "Projects", route: "/projects" }
 ]
-const { route, fullWidth } = Astro.props
+const { route } = Astro.props
 ---
 
 <style lang="scss">
 @use '/src/styles/common.scss';
 
-.container {
+.navbar {
     padding: 0;
     font-size: large;
     @include common.flex($justify: center, $align: center);
@@ -26,9 +26,11 @@ const { route, fullWidth } = Astro.props
         width: auto;
     }
 }
-
-label[for="nav-check"] {
-    display: block;
+.navbar-text {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 100%;
     margin-right: auto;
     font-size: 3rem;
     padding: .25rem;
@@ -76,16 +78,15 @@ label[for="nav-check"] {
 }
 </style>
 
-<div class="navbar">
-    <div class={ fullWidth as boolean ? "container-full" : "container" }>
-        <input id="nav-check" type="checkbox" />
-        <label for="nav-check"><Icon style="font-size:75%" name=menu /> serenit.ie</label>
-        <div class="nav-menu">
-        {
-          pages.map(page =>
-             (<a class:list={['nav-item', { active: page.route == route }]} href=`${page.route}`>{page.title}</a>)
-          )
+<header class="navbar">
+    <input id="nav-check" type="checkbox" />
+    <label class="navbar-text" for="nav-check"><Icon style="font-size:75%" name=menu />serenit.ie</label>
+    <nav class="nav-menu">
+        {pages.map(page =>
+                <a class:list={['nav-item', { active: page.route == route }]} href={page.route}>
+                   {page.title}
+                </a>
+            )
         }
-        </div>
-    </div>
-</div>
+    </nav>
+</header>
