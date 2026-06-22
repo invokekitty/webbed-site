@@ -27,11 +27,8 @@ const { route } = Astro.props
     }
 }
 .navbar-text {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
+    @include common.flex(row, space-between, center);
     width: 100%;
-    align-items: center;
     margin-right: auto;
     font-size: 3rem;
     padding: .25rem;
