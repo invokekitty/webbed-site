@@ -20,13 +20,8 @@ export default defineConfig({
       name: "Roboto Slab",
       cssVariable: "--font-roboto-slab",
       formats: ["woff2", "woff", "ttf"],
-<<<<<<< HEAD
       fallbacks: ["monospace"],
       display: "swap"
-=======
-      display: "swap",
-      fallbacks: ["monospace"]
->>>>>>> 242893b (meow)
     },
     {
       provider: fontProviders.fontsource(),
