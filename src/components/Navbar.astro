@@ -19,11 +19,17 @@ const { route } = Astro.props
 }
 
 .nav-menu {
-    display: none;
-
+    overflow: clip;
+    height: 0;
+    transition: height 200ms ease-in-out;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  
     @media (min-width: 500px) {
         @include common.flex($direction: row);
         width: auto;
+        height: unset;
     }
 }
 .navbar-text {
@@ -48,9 +54,7 @@ const { route } = Astro.props
     &:checked {
         @media(max-width: 500px) {
             ~ .nav-menu {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
+                height: 160px;
             }
         }
 

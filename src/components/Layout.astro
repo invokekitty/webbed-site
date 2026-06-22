@@ -4,7 +4,8 @@ import { Font } from "astro:assets";
 import Navbar from "./Navbar.astro"
 import Background from "./Background.astro"
 import Oneko from "./Oneko.astro"
-const { title, location } = Astro.props
+const { title } = Astro.props
+const location = Astro.url.pathname;
 ---
 
 <html lang="en">

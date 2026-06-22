@@ -25,6 +25,13 @@ a, a:visited {
     }
 }
 
+hr {
+    border: none;
+    border-top: 3px solid common.$text;
+    color: transparent;
+    height: 0;
+}
+
 [data-tooltip] {
     position: relative;
     &:not([data-tooltip=""]):hover {
@@ -46,5 +53,4 @@ a, a:visited {
             content: attr(data-tooltip);
         }
     }
-
 }
