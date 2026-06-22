@@ -1,0 +1,31 @@
+---
+import Layout from "../components/Layout.astro";
+---
+<style lang="scss">
+    .text404 {
+        font-size: 5rem;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .container404 {
+        padding: 20px;
+    }
+</style>
+
+<style lang="scss" is:global>
+    .container { 
+        min-width: fit-content; 
+        width: 80vw;
+        max-width: 400px !important;
+    }
+</style>
+
+<Layout title="Page not found" location="/404">
+    <div class="container404 box">
+        <h1 class="text404">404!</h1>
+        <h3>somrawne got lost :3</h3>
+        <hr/>
+        <p>get back on track you <b>cat</b></p>
+    </div>
+</Layout>

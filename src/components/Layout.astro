@@ -1,6 +1,6 @@
 ---
-import "../styles/main.scss"
-import { Font } from "astro:assets"
+import "../styles/main.scss";
+import { Font } from "astro:assets";
 import Navbar from "./Navbar.astro"
 import Background from "./Background.astro"
 import Oneko from "./Oneko.astro"
@@ -13,9 +13,9 @@ const { title, location } = Astro.props
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="generator" content={Astro.generator} />
-		<Font cssVariable="--font-tiny5"/>
+		<Font cssVariable="--font-tiny5" preload/>
 		<Font cssVariable="--font-lilex"/>
-		<Font cssVariable="--font-roboto-slab"/>
+		<Font cssVariable="--font-roboto-slab" preload/>
 		<Font cssVariable="--font-waffle"/>
 		<link rel="icon" href="/favicon.ico" />
 		<style lang="scss">
@@ -26,11 +26,6 @@ const { title, location } = Astro.props
                 color: $text;
                 background-color: #1a1443;
                 font-family: var(--font-roboto-slab);
-                //background-image: url("../assets/images/bg.webp");
-                //image-rendering: crisp-edges;
-                //background-attachment: fixed;
-                //background-size: cover;
-                //background-position: 13%;
                 @include flex;
             }
 
@@ -45,6 +40,10 @@ const { title, location } = Astro.props
             .footer {
                 margin-top: auto;
                 padding-top: .5rem;
+            }
+            
+            @view-transition {
+                navigation: auto;
             }
 		</style>
 		<slot name="head-extra" />

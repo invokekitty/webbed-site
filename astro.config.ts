@@ -9,7 +9,6 @@ export default defineConfig({
   adapter: cloudflare(),
   integrations: [mdx()],
   experimental: {
-    rustCompiler: true
   },
   build: {
     format: "preserve"
@@ -20,21 +19,24 @@ export default defineConfig({
       name: "Roboto Slab",
       cssVariable: "--font-roboto-slab",
       formats: ["woff2", "woff", "ttf"],
-      fallbacks: ["monospace"]
+      fallbacks: ["monospace"],
+      display: "swap"
     },
     {
       provider: fontProviders.fontsource(),
       name: "Tiny5",
       cssVariable: "--font-tiny5",
       formats: ["ttf"],
-      fallbacks: ["sans-serif"]
+      fallbacks: ["sans-serif"],
+      display: "swap"
     },
     {
       provider: fontProviders.fontsource(),
       name: "Lilex",
       cssVariable: "--font-lilex",
       formats: ["woff2", "woff", "ttf"],
-      fallbacks: ["monospace"]
+      fallbacks: ["monospace"],
+      display: "swap"
     },
     {
       provider: fontProviders.local(),
@@ -45,8 +47,7 @@ export default defineConfig({
         variants: [{
           src: ['./src/assets/fonts/waffle-traced.ttf'],
           weight: 'normal',
-          style: 'normal',
-          display: 'swap'
+          style: 'normal'
         }]
       }
     }
