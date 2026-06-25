@@ -7,24 +7,44 @@ const params = new URLSearchParams();
 modules?.split(" ").forEach(mod => params.append("modules", mod))
 ---
 
-<style lang="scss">
+<style lang="scss" is:global>
 @use '../../styles/colors.scss';
-@keyframes delay-display {
-	from: { display: none; }
-	to: { display: block; }
-}
+
 .graph {
+    position: relative;
     display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2/1;
+    border: none;
+}
+
+#graph-wrapper {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 2/1;
     border-top: none;
     border-right: none;
     border-bottom: 3px solid colors.$text;
     border-left: 3px solid colors.$text;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 2/1;
-    animation-name: delay-display;
-    animation-duration: 100ms;
 }
 </style>
 
-<iframe allowtransparency src={`/api/load_stats?${params.toString()}`} loading="lazy" scrolling="no" class="graph" />
+<div id="graph-wrapper">
+    <noscript>
+        <iframe allowtransparency src={`/api/load_stats?${params.toString()}`} loading="lazy" scrolling="no" class="graph" />
+    </noscript>
+    <!-- TODO: Do this with no client side js instead of optional -->
+    <script define:vars={{params: params.toString()}}>
+      window.onload = () => { setTimeout(() => {
+        const element = document.createElement("iframe");
+        element.setAttribute("allowtransparency", "true");
+        element.src=`/api/load_stats?${params}`;
+        element.loading="lazy";
+        element.scrolling = "no";
+        element.classList.add("graph");
+        document.getElementById("graph-wrapper").appendChild(element);
+      }, 30) }
+    </script>
+</div>
