@@ -38,7 +38,7 @@ hr {
         &:after {
             position: absolute;
             left: 50%;
-            top: -.15rem;
+            top: -.2rem;
             transform: translate(-50%, -100%);
             border-radius: 2px;
             background-color: common.$base;
@@ -48,7 +48,8 @@ hr {
             @include common.smooth;
             padding: 0.35rem;
             font-weight: bold;
-            text-wrap: nowrap;
+            text-wrap: wrap;
+            max-width: 10rem;
             z-index: 299;
             content: attr(data-tooltip);
         }

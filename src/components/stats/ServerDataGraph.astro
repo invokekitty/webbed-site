@@ -1,0 +1,30 @@
+---
+export const prerender = true
+
+const { modules }: { modules?: string } = Astro.props
+const params = new URLSearchParams();
+
+modules?.split(" ").forEach(mod => params.append("modules", mod))
+---
+
+<style lang="scss">
+@use '../../styles/colors.scss';
+@keyframes delay-display {
+	from: { display: none; }
+	to: { display: block; }
+}
+.graph {
+    display: block;
+    border-top: none;
+    border-right: none;
+    border-bottom: 3px solid colors.$text;
+    border-left: 3px solid colors.$text;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2/1;
+    animation-name: delay-display;
+    animation-duration: 100ms;
+}
+</style>
+
+<iframe allowtransparency src={`/api/load_stats?${params.toString()}`} loading="lazy" scrolling="no" class="graph" />

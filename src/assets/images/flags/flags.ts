@@ -1,3 +1,4 @@
+export const prerender = true;
 import _demi from './demi.png'
 import _nonbinary from './non-binary.png'
 import _polyamorous from './polyamogus.png'

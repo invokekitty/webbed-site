@@ -1,0 +1,34 @@
+---
+import Layout from "../components/Layout.astro"
+import QueryToggle from "../components/stats/QueryToggle.astro"
+import ServerDataGraph from "../components/stats/ServerDataGraph.astro"
+const params = Astro.url.searchParams.getAll("modules") ?? [ "cpu", "memory", "gpu", "uplink", "downlink", "storage" ]
+
+---
+<style lang="scss">
+    .eeg {
+        margin-top: 1rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: 1fr;
+    }
+    .box {
+        padding: 1rem 2.5rem;
+    }
+</style>
+<Layout title="invokekitty's server">
+    <Fragment slot="head-extra">
+        <meta http-equiv="refresh" content="300" />
+    </Fragment>
+    <div class="box">
+        <h1>ryusei</h1>
+        <ServerDataGraph modules={params.join(' ')} />
+        <div class="eeg fancy">
+            <QueryToggle group="modules" name="cpu" icon="cpu" activeColor="blue">CPU</QueryToggle>
+            <QueryToggle group="modules" name="gpu" icon="cpu" activeColor="red">GPU</QueryToggle>
+            <QueryToggle group="modules" name="memory" icon="ram" activeColor="green">Memory</QueryToggle>
+            <QueryToggle group="modules" name="downlink" icon="downdoot" activeColor="peach">Downlink</QueryToggle>
+            <QueryToggle group="modules" name="uplink" icon="updoot" activeColor="sapphire">Uplink</QueryToggle>
+        </div>
+    </div>
+</Layout>

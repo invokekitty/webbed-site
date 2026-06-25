@@ -1,0 +1,31 @@
+---
+import Icon from "../Icon.astro"
+const { group, name, icon, activeColor, ...attrs } = Astro.props
+const parameters = Astro.url.searchParams
+const active = parameters.getAll(group).includes(name);
+const url = Astro.url.pathname;
+let newParameters = new URLSearchParams(parameters)
+if (active)
+  newParameters.delete(group, name)
+else
+  newParameters.append(group, name)
+
+---
+<style lang="scss">
+@use '../../styles/common.scss' as *;
+.line-toggle {
+    position: relative;
+    padding-left: 1.4rem;
+}
+.toggle {
+    position: absolute;
+    left: 0;
+    bottom: 50%;
+    transform: translate(0, 55%);
+    color: $subtext;
+}
+</style>
+<span class="line-toggle">
+    <a href={`${url}?${newParameters}`} class="toggle" data-fg={ active ? activeColor : 'subtext' }><Icon name={icon} /></a>
+    <label><slot /></label>
+</span>

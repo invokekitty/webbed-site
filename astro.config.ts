@@ -8,6 +8,7 @@ import mdx from '@astrojs/mdx';
 export default defineConfig({
   adapter: cloudflare(),
   integrations: [mdx()],
+  output: 'server',
   experimental: {
   },
   build: {
