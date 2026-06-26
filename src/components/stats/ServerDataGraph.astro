@@ -33,14 +33,14 @@ modules?.split(" ").forEach(mod => params.append("modules", mod))
 
 <div id="graph-wrapper">
     <noscript>
-        <iframe allowtransparency src={`/api/load_stats?${params.toString()}`} loading="lazy" scrolling="no" class="graph" />
+        <iframe allowtransparency src={`https://ryusei.kisse.su/stats_graph?points=40&${params}`} loading="lazy" scrolling="no" class="graph" />
     </noscript>
     <!-- TODO: Do this with no client side js instead of optional -->
     <script define:vars={{params: params.toString()}}>
       window.onload = () => { setTimeout(() => {
         const element = document.createElement("iframe");
         element.setAttribute("allowtransparency", "true");
-        element.src=`/api/load_stats?${params}`;
+        element.src=`https://ryusei.kisse.su/stats_graph?points=40&${params}`;
         element.loading="lazy";
         element.scrolling = "no";
         element.classList.add("graph");

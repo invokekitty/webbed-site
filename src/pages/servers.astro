@@ -2,7 +2,10 @@
 import Layout from "../components/Layout.astro"
 import QueryToggle from "../components/stats/QueryToggle.astro"
 import ServerDataGraph from "../components/stats/ServerDataGraph.astro"
-const params = Astro.url.searchParams.getAll("modules") ?? [ "cpu", "memory", "gpu", "uplink", "downlink", "storage" ]
+const params = Astro.url.searchParams.getAll("modules");
+
+if (params.length == 0)
+  return Astro.redirect(`${Astro.url.pathname}?modules=cpu&modules=memory`)
 
 ---
 <style lang="scss">
