@@ -19,6 +19,7 @@ const location = Astro.url.pathname;
 		<Font cssVariable="--font-roboto-slab" preload/>
 		<Font cssVariable="--font-waffle"/>
 		<link rel="icon" href="/favicon.ico" />
+        <link rel="stylesheet" href="/meow">
 		<style lang="scss">
 		    @use '../styles/common.scss' as *;
             body {
@@ -43,6 +44,11 @@ const location = Astro.url.pathname;
                 padding-top: .5rem;
             }
             
+            .footertext {
+              display: flex;
+              justify-content: space-between;
+            }
+            
             @view-transition {
                 navigation: auto;
             }
@@ -58,8 +64,9 @@ const location = Astro.url.pathname;
             </div>
         </main>
         <footer class="footer">
-            <div class="container-full">
+            <div class="container-full footertext">
                 <small class="fancy">background by <a href="https://www.deviantart.com/pixeljeff">@pixeljeff on deviantart</a></small>
+                <small class="fancy visit-counter">Visits: </small>
             </div>
         </footer>
         <Oneko />

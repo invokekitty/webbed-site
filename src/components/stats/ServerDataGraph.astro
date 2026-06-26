@@ -1,10 +1,12 @@
 ---
 export const prerender = true
 
-const { modules }: { modules?: string } = Astro.props
+const { modules, endpoint, points }: { modules?: string, endpoint? : string, points? : any } = Astro.props
 const params = new URLSearchParams();
-
+params.append("points", points);
 modules?.split(" ").forEach(mod => params.append("modules", mod))
+
+const meowiagdfuijy = `${endpoint}?${params}`
 ---
 
 <style lang="scss" is:global>
@@ -17,6 +19,15 @@ modules?.split(" ").forEach(mod => params.append("modules", mod))
     height: auto;
     aspect-ratio: 2/1;
     border: none;
+}
+
+.graphnojs {
+    top: 100000px;
+    animation: displaygraph 200ms forwards;
+}
+
+@keyframes displaygraph {
+  to { top: unset; }
 }
 
 #graph-wrapper {
@@ -33,18 +44,19 @@ modules?.split(" ").forEach(mod => params.append("modules", mod))
 
 <div id="graph-wrapper">
     <noscript>
-        <iframe allowtransparency src={`https://ryusei.kisse.su/stats_graph?points=40&${params}`} loading="lazy" scrolling="no" class="graph" />
+        <iframe class="graph graphnojs" src={meowiagdfuijy} loading="lazy" scrolling="no" allowtransparency />
     </noscript>
     <!-- TODO: Do this with no client side js instead of optional -->
-    <script define:vars={{params: params.toString()}}>
-      window.onload = () => { setTimeout(() => {
+    <script define:vars={{mraaawwr: meowiagdfuijy.toString()}}>
+      const parent = document.currentScript.parentElement;
+      window.onload = () => {
         const element = document.createElement("iframe");
         element.setAttribute("allowtransparency", "true");
-        element.src=`https://ryusei.kisse.su/stats_graph?points=40&${params}`;
+        element.src=mraaawwr;
         element.loading="lazy";
         element.scrolling = "no";
         element.classList.add("graph");
-        document.getElementById("graph-wrapper").appendChild(element);
-      }, 30) }
+        parent.appendChild(element);
+      }
     </script>
 </div>

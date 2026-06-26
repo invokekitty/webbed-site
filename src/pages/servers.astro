@@ -25,7 +25,7 @@ if (params.length == 0)
     </Fragment>
     <div class="box">
         <h1>ryusei</h1>
-        <ServerDataGraph modules={params.join(' ')} />
+        <ServerDataGraph modules={params.join(' ')} endpoint="https://ryusei.kisse.su/stats_graph" points={40}/>
         <div class="eeg fancy">
             <QueryToggle group="modules" name="cpu" icon="cpu" activeColor="blue">CPU</QueryToggle>
             <QueryToggle group="modules" name="gpu" icon="cpu" activeColor="red">GPU</QueryToggle>
