@@ -6,6 +6,8 @@ import Background from "./Background.astro"
 import Oneko from "./Oneko.astro"
 const { title } = Astro.props
 const location = Astro.url.pathname;
+const queryParams = new URLSearchParams();
+queryParams.append("route", location);
 ---
 
 <html lang="en">
@@ -19,7 +21,7 @@ const location = Astro.url.pathname;
 		<Font cssVariable="--font-roboto-slab" preload/>
 		<Font cssVariable="--font-waffle"/>
 		<link rel="icon" href="/favicon.ico" />
-        <link rel="stylesheet" href="/meow">
+        <link rel="stylesheet" href={`/api/meow?route=${queryParams}`}>
 		<style lang="scss">
 		    @use '../styles/common.scss' as *;
             body {
