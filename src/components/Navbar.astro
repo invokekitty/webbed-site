@@ -9,7 +9,7 @@ const pages: { title: string, route: string }[] = [
 const { route } = Astro.props
 ---
 
-<style lang="scss">
+<style lang="scss" define:vars={{height: `${pages.length * 53.33}px`}}>
 @use '/src/styles/common.scss';
 
 .navbar {
@@ -26,7 +26,7 @@ const { route } = Astro.props
     display: flex;
     flex-direction: column;
     width: 100%;
-  
+
     @media (min-width: 500px) {
         @include common.flex($direction: row);
         width: auto;
@@ -42,8 +42,8 @@ const { route } = Astro.props
     cursor: pointer;
     @media (max-width: 245px) {
         font-size: 2rem;
-    }  
-  
+    }
+
     @media (min-width: 500px) {
         display: none;
     }
@@ -55,7 +55,7 @@ const { route } = Astro.props
     &:checked {
         @media(max-width: 500px) {
             ~ .nav-menu {
-                height: 160px;
+                height: var(--height);
             }
         }
 
