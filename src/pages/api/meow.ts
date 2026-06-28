@@ -1,13 +1,14 @@
-import type { APIContext, APIRoute } from "astro";
+import { type APIContext, type APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 
 export const prerender = false;
 
-let meow: Record<string, number> = {};
-
-export function GET({ url }: APIContext): Response {
+export async function GET({ url }: APIContext): Promise<Response> {
     const route = url.searchParams.get("route") ?? "/";
-    meow[route] ??= 0;
-    const message = `.visit-counter::after {content: "${++meow[route]}" !important;}}`;
+    const current = await env.PERSISTENT_DATA.get(`visits-${route}`).then(s => Number.parseInt(s ?? "0"));
+    const n = current + 1;
+    const message = `.visit-counter::after {content: "${n}" !important;}}`;
+    env.PERSISTENT_DATA.put(`visits-${route}`, n.toString());
 
     return new Response(message, {
         headers: {

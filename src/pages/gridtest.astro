@@ -1,0 +1,59 @@
+---
+import Layout from "../components/Layout.astro";
+import GridA from "../components/grid/Grid.astro";
+---
+
+<style>
+
+#offerings {
+    display: grid;
+    grid-template-areas: "s s s s d d d d d d d d"
+                         "s s s s m m m m m m m m"
+                         "b b b p p p c c c g g g";
+    grid-auto-columns: 1fr;
+    gap: 1rem;
+}
+
+.meow-1 { grid-area: b; }
+.meow-2 { grid-area: p; }
+.meow-3 { grid-area: c; }
+.meow-4 { grid-area: g; }
+
+#server-setup {
+    grid-area: s;
+}
+
+#discord-bots {
+    grid-area: d;
+}
+
+#minecraft-builds {
+    grid-area: m;
+}
+
+#bottom-things {
+    grid-area: b;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: stretch;
+}
+
+#server-setup, #discord-bots, #minecraft-builds, .meow-1, .meow-2, .meow-3, .meow-4 {
+    border: 2px solid white;
+    min-height: 200px;
+    flex-grow: 1;
+}
+
+</style>
+
+<Layout title="grid test">
+    <div id="offerings">
+        <div id="server-setup">a</div>
+        <div id="discord-bots">a</div>
+        <div id="minecraft-builds">a</div>
+        <div class="meow-1">a</div>
+        <div class="meow-2">a</div>
+        <div class="meow-3">a</div>
+        <div class="meow-4">a</div>
+    </div>
+</Layout>

@@ -2,6 +2,7 @@
 import "../styles/main.scss";
 import { Font } from "astro:assets";
 import Navbar from "./Navbar.astro"
+import Icon from "./Icon.astro";
 import Background from "./Background.astro"
 import Oneko from "./Oneko.astro"
 const { title } = Astro.props
@@ -21,7 +22,7 @@ queryParams.append("route", location);
 		<Font cssVariable="--font-roboto-slab" preload/>
 		<Font cssVariable="--font-waffle"/>
 		<link rel="icon" href="/favicon.ico" />
-        <link rel="stylesheet" href={`/api/meow?route=${queryParams}`}>
+        <link rel="stylesheet" href={`/api/meow?${queryParams}`}>
 		<style lang="scss">
 		    @use '../styles/common.scss' as *;
             body {
@@ -68,7 +69,7 @@ queryParams.append("route", location);
         <footer class="footer">
             <div class="container-full footertext">
                 <small class="fancy">background by <a href="https://www.deviantart.com/pixeljeff">@pixeljeff on deviantart</a></small>
-                <small class="fancy visit-counter">Visits: </small>
+                <small class="fancy visit-counter"><Icon name="goblin" /></small>
             </div>
         </footer>
         <Oneko />
