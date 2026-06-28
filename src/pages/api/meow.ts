@@ -8,7 +8,7 @@ export async function GET({ url }: APIContext): Promise<Response> {
     const current = await env.PERSISTENT_DATA.get(`visits_${route}`).then(s => Number.parseInt(s ?? "0"));
     const n = current + 1;
     const message = `.visit-counter::after {content: "${n}" !important;}}`;
-    env.PERSISTENT_DATA.put(`visits_${route}`, n.toString()).catch(console.error);
+    await env.PERSISTENT_DATA.put(`visits_${route}`, n.toString()).catch(console.error);
 
     return new Response(message, {
         headers: {
