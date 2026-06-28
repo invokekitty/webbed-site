@@ -1,4 +1,5 @@
 ---
+import { undefined } from "astro:schema";
 import Icon from "../Icon.astro";
 const sources: Record<string, [string, string, string, string]> = {
  codeberg: ["sourcecode", "Codeberg", "sapphire", "https://codeberg.org/"],
@@ -28,6 +29,10 @@ const links2 = links ?? {};
     color: $yellow;
     z-index: 5;
 }
+.delim {
+    padding-left: .45rem;
+    padding-right: .3rem;
+}
 </style>
 <div id={id} class="project">
     { deprecated && <span class="deprecated-marker"><Icon name="warning" /> Deprecated</span> }
@@ -35,9 +40,9 @@ const links2 = links ?? {};
     <span class="fancy">
         {
           Object.keys(links2).map((key, index) => {
-            const delim = (index == 0) ? "" : " • "
+            const delim = (index == 0) ? null : "•"
             const source = sources[key]; const href = `${source[3]}${links2[key]}`;
-            return <span>{delim}</span><a href={href} data-fg={source[2]}><Icon name={source[0]} /> {source[1]}</a>;
+            return <span>{(delim !== null) && <span class="delim">{delim}</span>}<a href={href} data-fg={source[2]}><Icon name={source[0]} /> {source[1]}</a></span>;
           })
         }
     </span>
