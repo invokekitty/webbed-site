@@ -54,7 +54,7 @@ hr.thicc {
             @include common.smooth;
             padding: 0.35rem;
             font-weight: bold;
-            text-wrap: wrap;
+            text-wrap: nowrap;
             max-width: 10rem;
             z-index: 299;
             content: attr(data-tooltip);
