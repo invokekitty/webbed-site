@@ -1,0 +1,44 @@
+---
+import Icon from "../Icon.astro";
+const sources: Record<string, [string, string, string, string]> = {
+ codeberg: ["sourcecode", "Codeberg", "sapphire", "https://codeberg.org/"],
+ github: ["cat", "GitHub", "text", "https://github.com/"],
+ modrinth: ["cog", "Modrinth", "green", "https://mods.gay/"],
+ curseforge: ["shopping-cart-i-think", "Curseforge", "peach", "https://www.curseforge.org/minecraft/mc-mods/"],
+ aur: ["i-use-arch-btw", "AUR", "blue", "https://aur.archlinux.org/packages/"],
+ site: ["safari", "Site", "sky", ""]
+}
+const { id, links, deprecated }: { id?: string, links?: { [target: string]: string }, deprecated?: any } = Astro.props;
+const links2 = links ?? {};
+---
+
+<style lang="scss">
+@use '../../styles/common.scss' as *;
+.project {
+    padding: 20px;
+    background-color: rgba(205, 214, 244, 0.12);
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+.deprecated-marker {
+    position: absolute;
+    top:20px;
+    right: 20px;
+    @include tiny5;
+    color: $yellow;
+    z-index: 5;
+}
+</style>
+<div id={id} class="project">
+    { deprecated && <span class="deprecated-marker"><Icon name="warning" /> Deprecated</span> }
+    <slot />
+    <span class="fancy">
+        {
+          Object.keys(links2).map((key, index) => {
+            const delim = (index == 0) ? "" : " • "
+            const source = sources[key]; const href = `${source[3]}${links2[key]}`;
+            return <span>{delim}</span><a href={href} data-fg={source[2]}><Icon name={source[0]} /> {source[1]}</a>;
+          })
+        }
+    </span>
+</div>

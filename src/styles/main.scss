@@ -32,6 +32,11 @@ hr {
     height: 0;
 }
 
+hr.thicc {
+    border-top-style: dashed;
+    border-top-width: 8px;
+}
+
 [data-tooltip] {
     position: relative;
     &:not([data-tooltip=""]):hover {

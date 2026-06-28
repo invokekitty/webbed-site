@@ -1,0 +1,56 @@
+---
+import Layout from "../components/Layout.astro"
+import Project from "../components/projects/Project.astro"
+---
+<style>
+hr {
+    margin-bottom: 2.5rem;
+}
+</style>
+
+<Layout title="invokekitty projects :3">
+    <h1>Projects i made</h1>
+    <hr class="thicc" />
+    <Project id="kritter" links={{codeberg: "sery/kritter"}}>
+        <h2>Kritter</h2>
+        <p>Minecraft multiplatform library with a declarative style and a more kotlin take on things</p>
+    </Project>
+    <Project id="nullbus" links={{codeberg: "sery/nullbus"}}>
+        <h2>Nullbus</h2>
+        <p>Event bus born out of delusions and insanity with equally delusional and insane benchmarks</p>
+    </Project>
+    <Project id="nullevt" links={{codeberg: "sery/nullevt"}}>
+        <h2>Nullevt</h2>
+        <p>Event system with a different architecture that is even faster than nullbus (and thread safe by default !!)</p>
+    </Project>
+    <Project id="serycade" links={{codeberg: "sery/serycade", aur: "serycade-git"}}>
+        <h2>Serycade</h2>
+        <p>Silly little tui games i made in kotlin native bcs riley is very cool</p>
+    </Project>
+    <Project id="ktindy" links={{codeberg: "sery/ktindy"}}>
+        <h2>KtIndy</h2>
+        <p>
+            A kotlin compiler plugin + runtime that makes kotlin use invokedynamic in more places where it makes sense.
+            Currently this includes annotation constructors and typeOf calls, but function and property reference are also planned
+        </p>
+        <p>Feturing some evil jvm fuckery</p>
+    </Project>
+    <Project id="website" links={{codeberg: "sery/webbed-site", site:"https://serenit.ie/"}}>
+        <h2>This website :3</h2>
+        <p>Yea this fkin site thats about it</p>
+    </Project>
+    <Project deprecated id="snowed-in" links={{codeberg: "sery/snowy_stuff", modrinth: "snowed-in"}}>
+        <h2>Snowlogging mod i made</h2>
+        <p>It sucks dont use it, also no longer maintained until i rewrite it</p>
+    </Project>
+    <h1>Projects i contribute to</h1>
+    <hr class="thicc" />
+    <Project id="estrogen" links={{github:"MayaqqDev/Estrogen", modrinth:"estrogen", curseforge:"estrogen"}}>
+        <h2>Estrogen</h2>
+        <p>A mod about estrogen i think</p>
+    </Project>
+    <Project id="cynosure" links={{github:"MayaqqDev/Cynosure", modrinth:"cynosure", curseforge:"cynosure"}}>
+        <h2>Cynosure</h2>
+        <p>A kotlin library mod with too much features</p>
+    </Project>
+</Layout>
