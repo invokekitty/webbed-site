@@ -4,7 +4,7 @@ const pages: { title: string, route: string }[] = [
   { title: "Home", route: "/" },
   { title: "Pronouns n Stuff", route: "/me" },
   { title: "Projects", route: "/projects" },
-  { title: "Servers", route: "/servers" }
+  { title: "Servers", route: "/servers" } 
 ]
 const { route } = Astro.props
 ---
@@ -89,8 +89,8 @@ const { route } = Astro.props
     <input id="nav-check" type="checkbox" />
     <label class="navbar-text" for="nav-check"><Icon style="font-size:75%" name=menu />serenit.ie</label>
     <nav class="nav-menu">
-        {pages.map(page =>
-                <a data-astro-prefetch class:list={['nav-item', { active: page.route == route }]} href={page.route}>
+        {pages.map(page => // MEOW
+                <a data-astro-prefetch class:list={['nav-item', { active: page.route == (route.length != 1 ? route.replace(/\/+$/g, '') : route) }]} href={page.route}>
                    {page.title}
                 </a>
             )
