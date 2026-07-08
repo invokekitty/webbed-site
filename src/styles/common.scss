@@ -59,3 +59,11 @@
 .caption {
     margin-bottom: 0;
 }
+
+$align: ( left, center, right, justify );
+
+@each $alignment in $align {
+    [data-align=#{$alignment}] {
+        text-align: $alignment;
+    }
+}
