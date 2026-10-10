@@ -1,0 +1,69 @@
+@use 'colors.scss';
+@forward 'colors.scss';
+
+@mixin geometric {
+    text-rendering: geometricPrecision;
+    font-smooth: never;
+    -moz-osx-font-smoothing: auto;
+    -webkit-font-smoothing: none;
+}
+
+@mixin smooth {
+    text-rendering: optimizeLegibility;
+    font-smooth: auto;
+    -mox-osx-font-smoothing: greyscale;
+    -webkit-font-smoothing: auto;
+}
+
+@mixin tiny5 {
+    font-family: var(--font-tiny5), sans-serif;
+}
+
+@mixin flex($direction: column, $justify: flex-start, $align: normal) {
+    display: flex;
+    flex-direction: $direction;
+    justify-content: $justify;
+    align-items: $align;
+}
+
+@mixin border($width: 0.5rem, $color: colors.$text) {
+    border: $width dashed $color;
+}
+
+.container, .container-full {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.container {
+    max-width: 800px;
+}
+
+.fancy {
+    @include tiny5;
+    line-height: 1.3em;
+}
+
+.box {
+    padding: 15px;
+    @include border;
+}
+
+.no-decoration {
+    list-style: none;
+    padding-left: 0;
+}
+
+.caption {
+    margin-bottom: 0;
+}
+
+$align: ( left, center, right, justify );
+
+@each $alignment in $align {
+    [data-align=#{$alignment}] {
+        text-align: $alignment;
+    }
+}

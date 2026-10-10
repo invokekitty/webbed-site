@@ -1,0 +1,73 @@
+@use 'common.scss';
+
+.navbar {
+    padding: 0;
+    font-size: large;
+    @include common.flex($justify: center, $align: center);
+    @include common.tiny5;
+}
+
+.nav-menu {
+    overflow: clip;
+    height: 0;
+    transition: height 200ms ease-in-out;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    @media (min-width: 500px) {
+        @include common.flex($direction: row);
+        width: auto;
+        height: unset;
+    }
+}
+.navbar-text {
+    @include common.flex(row, space-between, center);
+    width: 100%;
+    margin-right: auto;
+    font-size: 3rem;
+    padding: .25rem;
+    cursor: pointer;
+    @media (max-width: 245px) {
+        font-size: 2rem;
+    }
+
+    @media (min-width: 500px) {
+        display: none;
+    }
+}
+
+#nav-check {
+    display: none;
+
+    &:checked {
+        @media(max-width: 500px) {
+            ~ .nav-menu {
+                height: var(--height);
+            }
+        }
+
+        ~ [for="nav-check"] > .icon {
+            color: common.$mauve;
+        }
+    }
+}
+
+.nav-item, .nav-item:visited {
+    color: var(--text);
+
+    padding: 1rem 2rem .75rem 2rem;
+    border-bottom: .25rem dashed transparent;
+    transition: border-color 0.2s ease-in-out;
+    text-wrap: nowrap;
+}
+
+.nav-item.active {
+    color: common.$mauve !important;
+}
+
+.nav-item:hover {
+    text-decoration: none !important;
+    color: common.$text;
+    border-color: common.$text;
+}
