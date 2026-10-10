@@ -45,3 +45,54 @@ impl Render for Icon {
         html! { span.icon { (chr) } }
     }
 }
+
+// WAAYY too complicated grid generator impl
+pub struct GridDefinition<'a>(pub Option<u32>, pub &'a [&'a str], pub &'static str);
+
+impl Render for GridDefinition<'_> {
+    fn render_to(&self, buffer: &mut String) {
+        let GridDefinition(size, rows, scope) = self;
+        let mut depth: u8 = 0;
+        if let Some(size) = size {
+            depth += 1;
+            let _ = write!(buffer, "@media(min-width={size}px) {{ ");
+        }
+        depth += 1;
+        let _ = write!(buffer, ".grid[data-scope=\"{scope}\"] {{ ");
+        buffer.push_str("grid-template-areas:");
+        for row in rows.iter() {
+            buffer.push(' ');
+            let _ = write!(buffer, "\"{row}\"");
+        }
+        buffer.push(';');
+
+        for _ in 0..depth {
+            buffer.push_str(" }");
+        }
+    }
+}
+
+pub macro grid($($auto:ident;)?[$($row:literal),*];$($(@$px:literal>[$($row_px:literal),*]);*;)?$($area:ident:{$($content:tt)*})*) {{
+    const SCOPE: &str = concat!(module_path!(), "-", line!(), "-", column!());
+    let _auto: bool = false $(|| stringify!($auto) == "auto")?;
+    let _auto_rows: bool = _auto $(|| stringify!($auto) == "autorows")?;
+    let _auto_cols: bool = _auto $(|| stringify!($auto) == "autocols")?;
+    let __rootdefinition = GridDefinition(None, &[$($row,)*], SCOPE);
+    let __sizeddefinitions: &[GridDefinition<'_>] = &[];
+    $(let __sizeddefinitions: &[GridDefinition<'_>] =
+        &[$(GridDefinition(Some($px),&[$($row_px,)*], SCOPE)),*])?;
+
+    html! {
+        style {
+            (__rootdefinition)
+            @for _sd in __sizeddefinitions {
+                (_sd)
+            }
+        }
+        .grid.auto-columns[_auto_cols].auto-rows[_auto_rows] data-scope=(SCOPE) {
+            $(div data-scope=(SCOPE) style=(concat!("grid-area:", stringify!($area), ";")) {
+                $($content)*
+            })*
+        }
+    }
+}}

@@ -1,7 +1,7 @@
 use actix_web::{Responder, get};
 use maud::html;
 
-use crate::layout::{PageInfo, page};
+use crate::{components::grid, layout::{PageInfo, page}};
 
 
 pub const PAGES: &'static [PageInfo] = &[
@@ -14,9 +14,24 @@ pub const PAGES: &'static [PageInfo] = &[
 
 #[get("/")]
 pub async fn index() -> impl Responder {
-    page("invoking my kitty", "/", html! {
-        div.box {
-            "Meow"
+    page("invoking my kitty", "/", grid! {
+        autocols;
+        [ "links main main", "links frens frens" ];
+        @530>[ "main", "links", "frens" ];
+        links: {
+            .box {
+
+            }
+        }
+        main: {
+            .box {
+
+            }
+        }
+        frens: {
+            .box {
+
+            }
         }
     })
 }

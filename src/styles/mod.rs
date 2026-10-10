@@ -1,7 +1,9 @@
-use actix_web::{Responder, get};
+use actix_web::{HttpResponse, Responder, get, http::header::ContentType};
 
 
-#[get("/styles/style.scss")]
+#[get("/styles/style.css")]
 pub async fn style() -> impl Responder {
-    grass::include!("./src/styles/main.scss")
+    HttpResponse::Ok()
+        .content_type("text/css")
+        .body(grass::include!("./src/styles/main.scss"))
 }

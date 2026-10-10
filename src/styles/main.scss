@@ -108,3 +108,16 @@ body {
         }
     }
 }
+
+div.grid {
+    display: grid;
+    gap: 1rem;
+
+    &.auto-rows {
+        grid-auto-rows: 1fr;
+    }
+
+    &.auto-columns {
+        grid-auto-columns: 1fr;
+    }
+}

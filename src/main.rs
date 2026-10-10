@@ -1,3 +1,4 @@
+#![feature(decl_macro, macro_metavar_expr)]
 use std::io;
 
 use actix_web::{App, HttpServer};

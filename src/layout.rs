@@ -1,29 +1,30 @@
-use maud::{Markup, PreEscaped, html};
+use maud::{DOCTYPE, Markup, PreEscaped, html};
 
 use crate::{components::Icon, pages::PAGES};
 
 
 pub fn page(title: &str, route: &str, content: Markup) -> Markup {
     html! {
+        (DOCTYPE)
         html lang="en" {
             head {
                 title { (title) }
                 meta charset="UTF-8";
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
                 link rel="icon" href="/favicon.ico";
-                link rel="stylesheet" href="/styles/style.scss";
+                link rel="stylesheet" href="/styles/style.css";
                 link rel="stylesheet" href="/api/meow";
             }
             body dir="ltr" {
                 (background())
                 (navbar(PAGES, route))
                 main.content {
-                    div.container {
+                    .container {
                         (content)
                     }
                 }
                 footer.footer {
-                    div.container-full.footertext {
+                    .container-full.footertext {
                         small.fancy { "background by " a href="https://www.deviantart.com/pixeljeff" { "@pixeljeff" } }
                         small.fancy.visit-counter { (Icon::Goblin) }
                     }
