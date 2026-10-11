@@ -15,7 +15,7 @@ pub const PAGES: &'static [PageInfo] = &[
 #[get("/")]
 pub async fn index() -> impl Responder {
     page("invoking my kitty", "/",
-        grid! { autocols; [ "links main main", "links frens frens" ]; @530>[ "main", "links", "frens" ];
+        grid! { autocols; [ "links main main", "links frens frens" ]; @530 [ "main", "links", "frens" ];
             links: {
                 .box {
                     ul."icon-list" {

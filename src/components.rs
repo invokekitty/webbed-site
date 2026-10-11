@@ -81,7 +81,7 @@ pub macro iconli($icon:ident $([$($attrs:tt)+])? {$($content:tt)*}) {{
     }
 }}
 
-pub macro grid($($auto:ident;)?[$($row:literal),*];$($(@$px:literal>[$($row_px:literal),*]);*;)?$($area:ident:{$($content:tt)*})*) {{
+pub macro grid($($auto:ident;)?[$($row:literal),*];$($(@$px:literal[$($row_px:literal),*]);*;)?$($area:ident:{$($content:tt)*})*) {{
     const SCOPE: &str = concat!(module_path!(), "-", line!(), "-", column!());
     let _auto: bool = false $(|| stringify!($auto) == "auto")?;
     let _auto_rows: bool = _auto $(|| stringify!($auto) == "autorows")?;
