@@ -66,6 +66,15 @@ body {
   justify-content: space-between;
 }
 
+.icon {
+    display: inline-block;
+    font-family: waffle;
+    line-height: 1;
+    font-weight: normal;
+    font-style: normal;
+    @include geometric;
+}
+
 .bg-img {
     position: fixed;
     display: block;
@@ -79,6 +88,51 @@ body {
     min-height: 100vh;
     z-index: -100;
     pointer-events: none;
+}
+
+ul.icon-list {
+    //@extend .no-decoration;
+    list-style: none;
+    padding-left: 0;
+    > li {
+        position: relative;
+        padding-left: 1.4rem;
+        > .icon {
+            position: absolute;
+            left: 0;
+            bottom: 50%;
+            transform: translate(0, 55%);
+        }
+    }
+}
+
+ul:not(.icon-list) > li[data-icon-list] > .icon {
+    display: none;
+}
+
+div.grid {
+    display: grid;
+    gap: 1rem;
+
+    &.auto-rows {
+        grid-auto-rows: 1fr;
+    }
+
+    &.auto-columns {
+        grid-auto-columns: 1fr;
+    }
+}
+
+.friendlink>img {
+    width: auto;
+    max-height: 38px;
+    height: 38px;
+}
+
+.friendlink {
+    vertical-align: middle;
+    margin-right: .3rem;
+    text-decoration: none !important;
 }
 
 @view-transition {
@@ -106,18 +160,5 @@ body {
             z-index: 299;
             content: attr(data-tooltip);
         }
-    }
-}
-
-div.grid {
-    display: grid;
-    gap: 1rem;
-
-    &.auto-rows {
-        grid-auto-rows: 1fr;
-    }
-
-    &.auto-columns {
-        grid-auto-columns: 1fr;
     }
 }

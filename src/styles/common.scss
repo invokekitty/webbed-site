@@ -1,4 +1,5 @@
 @use 'colors.scss';
+@use 'fonts.scss';
 @forward 'colors.scss';
 
 @mixin geometric {
@@ -16,7 +17,7 @@
 }
 
 @mixin tiny5 {
-    font-family: var(--font-tiny5), sans-serif;
+    font-family: Tiny5, sans-serif;
 }
 
 @mixin flex($direction: column, $justify: flex-start, $align: normal) {

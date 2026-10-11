@@ -55,10 +55,10 @@ impl Render for GridDefinition<'_> {
         let mut depth: u8 = 0;
         if let Some(size) = size {
             depth += 1;
-            let _ = write!(buffer, "@media(min-width={size}px) {{ ");
+            let _ = write!(buffer, "@media(max-width: {size}px){{");
         }
         depth += 1;
-        let _ = write!(buffer, ".grid[data-scope=\"{scope}\"] {{ ");
+        let _ = write!(buffer, ".grid[data-scope=\"{scope}\"]{{");
         buffer.push_str("grid-template-areas:");
         for row in rows.iter() {
             buffer.push(' ');
@@ -67,10 +67,19 @@ impl Render for GridDefinition<'_> {
         buffer.push(';');
 
         for _ in 0..depth {
-            buffer.push_str(" }");
+            buffer.push('}');
         }
     }
 }
+
+pub macro iconli($icon:ident $([$($attrs:tt)+])? {$($content:tt)*}) {{
+    html! {
+        li $($($attrs)+)? data-icon-list {
+            (Icon::$icon)
+            span { $($content)* }
+        }
+    }
+}}
 
 pub macro grid($($auto:ident;)?[$($row:literal),*];$($(@$px:literal>[$($row_px:literal),*]);*;)?$($area:ident:{$($content:tt)*})*) {{
     const SCOPE: &str = concat!(module_path!(), "-", line!(), "-", column!());
@@ -96,3 +105,11 @@ pub macro grid($($auto:ident;)?[$($row:literal),*];$($(@$px:literal>[$($row_px:l
         }
     }
 }}
+
+pub fn friendlink(href: &str, tooltip: Option<&str>, img: &str, alt: &str) -> Markup {
+    html! {
+        a.friendlink href=(href) data-tooltip=[tooltip] {
+            img src=(img) alt=(alt);
+        }
+    }
+}
