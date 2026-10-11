@@ -40,9 +40,13 @@ pub enum Icon {
 }
 
 impl Render for Icon {
-    fn render(&self) -> maud::Markup {
-        let chr = char::from_u32(*self as u32).expect("I fuckied upied");
-        html! { span.icon { (chr) } }
+    // fn render(&self) -> maud::Markup {
+    //     let chr = char::from_u32(*self as u32).expect("I fuckied upied");
+    //     html! { span.icon { (chr) } }
+    // } is what i would do, if i wasnt an insane performance freak
+    fn render_to(&self, buffer: &mut String) {
+        let chr = unsafe { char::from_u32_unchecked(*self as u32) };
+        let _ = write!(buffer, "<span class=\"icon\">{chr}</span>");
     }
 }
 
