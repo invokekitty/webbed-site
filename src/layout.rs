@@ -30,20 +30,25 @@ pub fn page(title: &str, route: &str, content: Markup) -> Markup {
                     }
                 }
                 (PreEscaped("<!--[if IE]>"))
-                script src="/scripts/oneko-ie6.js" data-cat="/assets/images/oneko.gif" {}
+                script src="/scripts/oneko-ie6.js" data-cat="/images/oneko.gif" {}
                 (PreEscaped(
                     r#"<![endif]-->
                     <!--[if !IE]><!-->"#
                 ))
-                script src="/assets/scripts/oneko.js" data-cat="/assets/images/oneko.gif" {}
+                script src="/scripts/oneko.js" data-cat="/images/oneko.gif" {}
+                (PreEscaped("<!--[endif]><!-->"))
             }
         }
     }
 }
 
+macro oneko() {
+
+}
+
 fn background() -> Markup {
     html! {
-        img.bg-img src="/assets/images/bg.webp" alt="background";
+        img.bg-img src="/images/bg.webp" alt="background";
     }
 }
 
@@ -56,9 +61,10 @@ fn navbar(pages: &[PageInfo], active_route: &str) -> Markup {
             label.navbar-text for="nav-check" {
                 span style="font-size:75%" { (Icon::Menu) }
             }
-            nav.nav-menu {
+            nav.nav-menu style=(format!("--height: {}px", 53.33 * pages.len() as f32)) {
                 @for page in pages {
-                    a.nav-item .active[page.route == active_route] {
+                    // TODO: Only check the part before '?' and '#'
+                    a.nav-item .active[page.route == active_route] href=(page.route) {
                         (page.title)
                     }
                 }

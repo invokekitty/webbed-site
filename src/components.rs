@@ -89,7 +89,7 @@ pub macro grid($($auto:ident;)?[$($row:literal),*];$($(@$px:literal[$($row_px:li
     let __rootdefinition = GridDefinition(None, &[$($row,)*], SCOPE);
     let __sizeddefinitions: &[GridDefinition<'_>] = &[];
     $(let __sizeddefinitions: &[GridDefinition<'_>] =
-        &[$(GridDefinition(Some($px),&[$($row_px,)*], SCOPE)),*])?;
+        &[$(GridDefinition(Some($px),&[$($row_px,)*], SCOPE)),*];)?
 
     html! {
         style {

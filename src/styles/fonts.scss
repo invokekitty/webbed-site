@@ -2,14 +2,14 @@
     font-family: Tiny5;
     font-weight: normal;
     font-style: normal;
-    src: url(/assets/fonts/tiny5/tiny5-latin-400-normal.woff2) format(woff2),
-         url(/assets/fonts/tiny5/tiny5-cyrillic-400-normal.woff2) format(woff2),
-         url(/assets/fonts/tiny5/tiny5-greek-400-normal.woff2) format(woff2),
-         url(/assets/fonts/tiny5/tiny5-latin-ext-400-normal.woff2) format(woff2);
+    src: url(/fonts/tiny5/tiny5-latin-400-normal.woff2) format(woff2),
+         url(/fonts/tiny5/tiny5-cyrillic-400-normal.woff2) format(woff2),
+         url(/fonts/tiny5/tiny5-greek-400-normal.woff2) format(woff2),
+         url(/fonts/tiny5/tiny5-latin-ext-400-normal.woff2) format(woff2);
 }
 
 @font-face {
     font-family: waffle;
-    src: url(/assets/fonts/waffle/waffle-traced.ttf) format(truetype);
+    src: url(/fonts/waffle/waffle-traced.ttf) format(truetype);
 
 }
