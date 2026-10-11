@@ -92,11 +92,11 @@ pub macro iconli($icon:ident $(@$tooltip:literal)? $([$($attrs:tt)+])? {$($conte
     }
 }}
 
-pub macro iconlist($([$($props:tt)+])?$($icon:ident $(@[$($iconprops:tt)*])? $([$($liprops:tt)*])? {$($content:tt)*})*) {{
+pub macro iconlist($([$($props:tt)+])?$($icon:ident $(@[$($iconprops:tt)+])? $([$($liprops:tt)+])? {$($content:tt)*})*) {{
     html! {
         ul.icon-list $($($props)+)? {$(
-            li $($($liprops)*)? {
-                span.icon $($($iconprops)*)? { (Icon::$icon.to_char()) }
+            li $($($liprops)+)? {
+                span.icon $($($iconprops)+)? { (Icon::$icon.to_char()) }
                 span { $($content)* }
             }
         )*}
