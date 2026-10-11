@@ -6,7 +6,7 @@ use actix_web_static_files::ResourceFiles;
 use chrono::{DateTime, Local, TimeZone, Utc};
 use clap::Parser;
 
-use crate::pages::SEERGYBIRTH;
+use crate::pages::me::SEERGYBIRTH;
 
 include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 
@@ -33,8 +33,8 @@ async fn main() -> io::Result<()> {
 
     HttpServer::new(|| {
         App::new()
-            .service(pages::index)
-            .service(pages::me)
+            .service(pages::index::get)
+            .service(pages::me::get)
             .service(styles::style)
             .service(ResourceFiles::new("/", generate()))
     })

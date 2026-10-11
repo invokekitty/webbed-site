@@ -36,7 +36,14 @@ pub enum Icon {
     Download = '' as u32,
     Upload = '' as u32,
     CD = '' as u32,
-    Floppy = '' as u32
+    Floppy = '' as u32,
+    T = 't' as u32
+}
+
+impl Icon {
+    pub fn to_char(&self) -> char {
+        unsafe { char::from_u32_unchecked(*self as u32) }
+    }
 }
 
 impl Render for Icon {
@@ -82,6 +89,17 @@ pub macro iconli($icon:ident $(@$tooltip:literal)? $([$($attrs:tt)+])? {$($conte
             (Icon::$icon)
             span { $($content)* }
         }
+    }
+}}
+
+pub macro iconlist($([$($props:tt)+])?$($icon:ident $(@[$($iconprops:tt)*])? $([$($liprops:tt)*])? {$($content:tt)*})*) {{
+    html! {
+        ul.icon-list $($($props)+)? {$(
+            li $($($liprops)*)? {
+                span.icon $($($iconprops)*)? { (Icon::$icon.to_char()) }
+                span { $($content)* }
+            }
+        )*}
     }
 }}
 

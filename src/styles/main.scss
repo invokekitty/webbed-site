@@ -19,11 +19,11 @@ a, a:visited {
     text-decoration: none;
     color: $mauve;
     transition: color 0.18s ease-in-out;
+}
 
-    &:hover {
-        color: #b494e1;
-        text-decoration: underline;
-    }
+a:hover {
+    color: #b494e1;
+    text-decoration: underline;
 }
 
 hr {
@@ -68,9 +68,9 @@ body {
 
 .icon {
     display: inline-block;
-    font-family: waffle;
+    font-family: tiny5, waffle;
+    font-weight: bold;
     line-height: 1;
-    font-weight: normal;
     font-style: normal;
     @include geometric;
 }
@@ -103,6 +103,24 @@ ul.icon-list {
             bottom: 50%;
             transform: translate(0, 55%);
         }
+    }
+}
+
+.legend-content {
+    padding-left: 0;
+    list-style: none;
+    @include flex($direction: row, $justify: center);
+    flex-wrap: wrap;
+    color: $subtext;
+    margin-bottom: 0;
+    margin-top: 1rem;
+
+    & > li {
+        display: block;
+        padding: 0.25rem;
+        margin-left: .5rem;
+        margin-right: .5rem;
+        flex: 0 1 content;
     }
 }
 
