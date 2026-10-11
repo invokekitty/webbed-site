@@ -76,7 +76,7 @@ impl Render for GridDefinition<'_> {
     }
 }
 
-pub macro iconli($icon:ident $([$($attrs:tt)+])? {$($content:tt)*}) {{
+pub macro iconli($icon:ident $(@$tooltip:literal)? $([$($attrs:tt)+])? {$($content:tt)*}) {{
     html! {
         li $($($attrs)+)? data-icon-list {
             (Icon::$icon)
