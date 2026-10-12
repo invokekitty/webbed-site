@@ -15,6 +15,7 @@ chrono-tz = "0.10.4"
 clap = { version = "4.6.7", features = ["derive"] }
 grass = { version = "0.13.4", default-features = false, features = [ "macro" ]}
 iana-time-zone = "0.1.65"
+markdown = "1.0.0"
 maud = { version = "0.27.0", features = [ "actix-web" ] }
 rustls = "0.23.45"
 static-files = "0.3.1"

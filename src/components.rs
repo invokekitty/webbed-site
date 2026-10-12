@@ -41,8 +41,8 @@ pub enum Icon {
 }
 
 impl Icon {
-    pub fn to_char(&self) -> char {
-        unsafe { char::from_u32_unchecked(*self as u32) }
+    pub fn to_raw(&self) -> impl Render {
+        RawIcon(*self)
     }
 }
 
@@ -52,8 +52,51 @@ impl Render for Icon {
     //     html! { span.icon { (chr) } }
     // } is what i would do, if i wasnt an insane performance freak
     fn render_to(&self, buffer: &mut String) {
-        let chr = unsafe { char::from_u32_unchecked(*self as u32) };
-        let _ = write!(buffer, "<span class=\"icon\">{chr}</span>");
+        buffer.push_str("<span class=\"icon\">");
+        self.to_raw().render_to(buffer);
+        buffer.push_str("</span>");
+    }
+}
+
+struct RawIcon(Icon);
+impl Render for RawIcon {
+    fn render_to(&self, buffer: &mut String) {
+        let chr = unsafe { char::from_u32_unchecked((self.0) as u32) };
+        if let Icon::T = self.0 {
+            buffer.push_str("<b style=\"font-size: 1.2rem\">&nbsp;");
+        }
+        buffer.push(chr);
+        if let Icon::T = self.0 {
+            buffer.push_str("</b>");
+        }
+    }
+}
+
+pub macro iconli($icon:ident $(@$tooltip:literal)? $([$($attrs:tt)+])? {$($content:tt)*}) {{
+    html! {
+        li $($($attrs)+)? data-icon-list {
+            (Icon::$icon)
+            span { $($content)* }
+        }
+    }
+}}
+
+pub macro iconlist($([$($props:tt)+])?$($icon:ident $(@[$($iconprops:tt)+])? $([$($liprops:tt)+])? {$($content:tt)*})*) {{
+    html! {
+        ul.icon-list $($($props)+)? {$(
+            li $($($liprops)+)? {
+                span.icon $($($iconprops)+)? { (Icon::$icon.to_raw()) }
+                span { $($content)* }
+            }
+        )*}
+    }
+}}
+
+pub fn friendlink(href: &str, tooltip: Option<&str>, img: &str, alt: &str) -> Markup {
+    html! {
+        a.friendlink href=(href) data-tooltip=[tooltip] {
+            img src=(img) alt=(alt);
+        }
     }
 }
 
@@ -83,26 +126,6 @@ impl Render for GridDefinition<'_> {
     }
 }
 
-pub macro iconli($icon:ident $(@$tooltip:literal)? $([$($attrs:tt)+])? {$($content:tt)*}) {{
-    html! {
-        li $($($attrs)+)? data-icon-list {
-            (Icon::$icon)
-            span { $($content)* }
-        }
-    }
-}}
-
-pub macro iconlist($([$($props:tt)+])?$($icon:ident $(@[$($iconprops:tt)+])? $([$($liprops:tt)+])? {$($content:tt)*})*) {{
-    html! {
-        ul.icon-list $($($props)+)? {$(
-            li $($($liprops)+)? {
-                span.icon $($($iconprops)+)? { (Icon::$icon.to_char()) }
-                span { $($content)* }
-            }
-        )*}
-    }
-}}
-
 pub macro grid($($auto:ident;)?[$($row:literal),*];$($(@$px:literal[$($row_px:literal),*]);*;)?$($area:ident:{$($content:tt)*})*) {{
     const SCOPE: &str = concat!(module_path!(), "-", line!(), "-", column!());
     let _auto: bool = false $(|| stringify!($auto) == "auto")?;
@@ -127,11 +150,3 @@ pub macro grid($($auto:ident;)?[$($row:literal),*];$($(@$px:literal[$($row_px:li
         }
     }
 }}
-
-pub fn friendlink(href: &str, tooltip: Option<&str>, img: &str, alt: &str) -> Markup {
-    html! {
-        a.friendlink href=(href) data-tooltip=[tooltip] {
-            img src=(img) alt=(alt);
-        }
-    }
-}

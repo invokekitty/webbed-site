@@ -26,7 +26,8 @@ pub async fn get() -> impl Responder {
                     p {
                         r#"Haii im sery, dumbass cat that codes and enjoys music alot.
                         You can find projects and random shit i say here :3"#
-                        br;br;
+                    }
+                    p {
                         r#"
                         Im an enby cat that lives somewhere in Europe (wont tell u where :3). I like coding,
                         mostly work on minecraft mods and other jvm-related stuff in kotlin, and pretty much anything
