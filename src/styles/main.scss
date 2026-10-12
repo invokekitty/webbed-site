@@ -44,7 +44,7 @@ body {
     min-height: 100vh;
     color: $text;
     background-color: #1a1443;
-    font-family: var(--font-roboto-slab);
+    font-family: tewi, serif;
     @include flex;
 }
 
@@ -169,7 +169,7 @@ div.grid {
             background-color: $base;
             color: $text;
             font-size: small;
-            font-family: var(--font-roboto-slab);
+            font-family: tewi, serif;
             @include smooth;
             padding: 0.35rem;
             font-weight: bold;

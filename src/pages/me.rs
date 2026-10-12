@@ -63,7 +63,7 @@ pub async fn get() -> impl Responder {
                     (iconlist! [
                         Heart@[data-tooltip="Enby fuck"] [data-fg="pink"] { "they/them" }
                         Heart@[data-tooltip="im a  girl kind of"] [data-fg="pink"] { "she/her" }
-                        Updoot@[data-tooltip="also a bit of a thing.. you could say a girlthing"] [data-fg="text"] { "it/its" }
+                        Updoot@[data-tooltip="also a bit of a thing.."] [data-fg="text"] { "it/its" }
                     ])
                 }
                 compl: {
