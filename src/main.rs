@@ -1,9 +1,9 @@
-#![feature(decl_macro, macro_metavar_expr)]
+#![feature(decl_macro)]
 use std::io;
 
 use actix_web::{App, HttpServer};
 use actix_web_static_files::ResourceFiles;
-use chrono::{DateTime, Local, TimeZone, Utc};
+use chrono::{DateTime, TimeZone, Utc};
 use clap::Parser;
 
 use crate::pages::me::SEERGYBIRTH;

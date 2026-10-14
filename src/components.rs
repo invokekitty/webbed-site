@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fmt::Write};
+use std::fmt::Write;
 
 use maud::{Markup, PreEscaped, Render, html};
 

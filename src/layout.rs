@@ -42,10 +42,6 @@ pub fn page(title: &str, route: &str, content: Markup) -> Markup {
     }
 }
 
-macro oneko() {
-
-}
-
 fn background() -> Markup {
     html! {
         img.bg-img src="/images/bg.webp" alt="background";

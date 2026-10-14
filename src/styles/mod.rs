@@ -1,4 +1,4 @@
-use actix_web::{HttpResponse, Responder, get, http::header::ContentType};
+use actix_web::{HttpResponse, Responder, get};
 
 
 #[get("/styles/style.css")]
