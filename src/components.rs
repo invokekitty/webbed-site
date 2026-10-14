@@ -1,6 +1,8 @@
 use std::{collections::HashMap, fmt::Write};
 
-use maud::{Markup, Render, html};
+use maud::{Markup, PreEscaped, Render, html};
+
+pub const NBSP: PreEscaped<&str> = PreEscaped("&nbsp;");
 
 #[allow(dead_code)]
 #[derive(Clone, Copy)]
@@ -73,7 +75,7 @@ impl Render for RawIcon {
 }
 
 pub macro iconli($icon:ident $(@$tooltip:literal)? $([$($attrs:tt)+])? {$($content:tt)*}) {{
-    html! {
+    maud::html! {
         li $($($attrs)+)? data-icon-list {
             (Icon::$icon)
             span { $($content)* }
@@ -82,7 +84,7 @@ pub macro iconli($icon:ident $(@$tooltip:literal)? $([$($attrs:tt)+])? {$($conte
 }}
 
 pub macro iconlist($([$($props:tt)+])?$($icon:ident $(@[$($iconprops:tt)+])? $([$($liprops:tt)+])? {$($content:tt)*})*) {{
-    html! {
+    maud::html! {
         ul.icon-list $($($props)+)? {$(
             li $($($liprops)+)? {
                 span.icon $($($iconprops)+)? { (Icon::$icon.to_raw()) }
@@ -96,6 +98,50 @@ pub fn friendlink(href: &str, tooltip: Option<&str>, img: &str, alt: &str) -> Ma
     html! {
         a.friendlink href=(href) data-tooltip=[tooltip] {
             img src=(img) alt=(alt);
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
+pub enum Platform {
+    Codeberg,
+    Github,
+    Modrinth,
+    CurseForge,
+    AUR,
+    Site
+}
+
+impl Platform {
+    pub fn data(&self) -> (Icon, &'static str, &'static str, &'static str) {
+        match self {
+            Platform::Codeberg => (Icon::SourceCode, "Codeberg", "sapphire", "https://codeberg.org/"),
+            Platform::Github => (Icon::Cat, "Github", "text", "https://github.com/"),
+            Platform::Modrinth => (Icon::Cog, "Modrinth", "green", "https://mods.gay/"),
+            Platform::CurseForge => (Icon::ShoppingCartIThink, "CurseForge", "peach", "https://curseforge.org/minecraft/mc-mods/"),
+            Platform::AUR => (Icon::IUseArchBtw, "AUR", "blue", "https://aur.archlinux.org/packages/"),
+            Platform::Site => (Icon::Safari, "Website", "sky", "")
+        }
+    }
+}
+
+pub fn project(id: &str, links: &[(Platform, &str)], deprecated: bool, content: Markup) -> Markup {
+    html! {
+        div #(id) .project {
+            @if deprecated {
+                span.deprecated-marker { (Icon::Warning)(NBSP)"Deprecated" }
+            }
+            (content)
+            span.fancy {
+                @for (index, (platform, link)) in links.iter().enumerate() {
+                    @let (icon, name, color, linkprefix) = platform.data();
+                    @let href = format!("{linkprefix}{link}");
+                    span {
+                        @if index != 0 { span.delim { "•" } }
+                        a href=(href) data-fg=(color) { (icon)(NBSP)(name) }
+                    }
+                }
+            }
         }
     }
 }
@@ -136,7 +182,7 @@ pub macro grid($($auto:ident;)?[$($row:literal),*];$($(@$px:literal[$($row_px:li
     $(let __sizeddefinitions: &[GridDefinition<'_>] =
         &[$(GridDefinition(Some($px),&[$($row_px,)*], SCOPE)),*];)?
 
-    html! {
+    maud::html! {
         style {
             (__rootdefinition)
             @for _sd in __sizeddefinitions {

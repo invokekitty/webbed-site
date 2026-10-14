@@ -141,16 +141,34 @@ div.grid {
     }
 }
 
-.friendlink>img {
-    width: auto;
-    max-height: 38px;
-    height: 38px;
-}
-
 .friendlink {
     vertical-align: middle;
     margin-right: .3rem;
     text-decoration: none !important;
+    > img {
+        width: auto;
+        max-height: 38px;
+        height: 38px;
+    }
+}
+
+.project {
+    padding: 20px;
+    background-color: rgba(205, 214, 244, 0.12);
+    margin-bottom: 2.5rem;
+    position: relative;
+    .deprecated-marker {
+        position: absolute;
+        top:20px;
+        right: 20px;
+        @include tiny5;
+        color: $yellow;
+        z-index: 5;
+    }
+    .delim {
+        padding-left: .45rem;
+        padding-right: .3rem;
+    }
 }
 
 @view-transition {

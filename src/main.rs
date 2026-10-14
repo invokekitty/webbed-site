@@ -35,6 +35,7 @@ async fn main() -> io::Result<()> {
         App::new()
             .service(pages::index::get)
             .service(pages::me::get)
+            .service(pages::projects::get)
             .service(styles::style)
             .service(ResourceFiles::new("/", generate()))
     })

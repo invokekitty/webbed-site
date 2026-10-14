@@ -34,6 +34,7 @@ pub async fn get() -> impl Responder {
                 ];
                 @530 [
                     "title",
+                    "flags",
                     "desc",
                     "names",
                     "prns",
@@ -52,30 +53,30 @@ pub async fn get() -> impl Responder {
                 }
                 names: {
                     h2 { "My Names :3" }
-                    (iconlist![
+                    (iconlist! {
                         Heart [data-fg="pink"] { "serenity" }
                         Heart [data-fg="pink"] { "sery" }
                         Updoot [data-fg="text"] { "serena" }
-                    ])
+                    })
                 }
                 prns: {
                     h2 { "My pronouns" }
-                    (iconlist! [
+                    (iconlist! {
                         Heart@[data-tooltip="Enby fuck"] [data-fg="pink"] { "they/them" }
                         Heart@[data-tooltip="im a  girl kind of"] [data-fg="pink"] { "she/her" }
                         Updoot@[data-tooltip="also a bit of a thing.."] [data-fg="text"] { "it/its" }
-                    ])
+                    })
                 }
                 compl: {
                     h2 { "Things to refer to me with" }
-                    (iconlist! [
+                    (iconlist! {
                         Heart@[data-tooltip="LOIK thiS"] [data-fg="pink"] { "girl" }
                         Heart@[data-tooltip="MRRRAAAWWW"] [data-fg="pink"] { "cat" }
                         Updoot@[data-tooltip="i be a bit of a boi"] [data-fg="text"] { "boi" }
                         Group@[data-tooltip="only if ur mine <3"] [data-fg="red"] { "girlfriend" }
                         Group@[data-tooltip="u faggot"] [data-fg="red"] { "boyfriend" }
                         Group@[data-tooltip="in crime"] [data-fg="red"] { "partner" }
-                    ])
+                    })
                 }
                 legend: {
                     ul.legend-content {
