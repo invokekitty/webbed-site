@@ -3,10 +3,11 @@ use maud::html;
 
 use crate::layout::*;
 use crate::components::*;
+use crate::pages::PAGES;
 
 #[get("/projects")]
 pub async fn get() -> impl Responder {
-    page("kittyprojects", "/projects", html! {
+    page(PAGES, "kittyprojects", "/projects", html! {
         h1 { "Projects i made" }
         hr.thicc;
         (project ("kritter", &[(Platform::Codeberg, "sery/kritter")], false, html! {

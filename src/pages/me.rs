@@ -6,6 +6,7 @@ use maud::html;
 
 use crate::layout::page;
 use crate::components::*;
+use crate::pages::PAGES;
 
 pub static SEERGYBIRTH: OnceLock<DateTime<Utc>> = OnceLock::new();
 
@@ -14,7 +15,7 @@ pub async fn get() -> impl Responder {
     let today = Utc::now();
     let seergyage = SEERGYBIRTH.get().and_then(|bd| today.years_since(*bd)).unwrap_or(14);
 
-    page("invoking the pronouns", "/me", html! {
+    page(PAGES, "invoking the pronouns", "/me", html! {
         .box {
             (grid! {
                 autocols;

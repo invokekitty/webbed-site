@@ -1,9 +1,9 @@
 use maud::{DOCTYPE, Markup, PreEscaped, html};
 
-use crate::{components::Icon, pages::PAGES};
+use crate::{components::Icon};
 
 
-pub fn page(title: &str, route: &str, content: Markup) -> Markup {
+pub fn page(pages: &[PageInfo], title: &str, route: &str, content: Markup) -> Markup {
     html! {
         (DOCTYPE)
         html lang="en" {
@@ -17,7 +17,7 @@ pub fn page(title: &str, route: &str, content: Markup) -> Markup {
             }
             body dir="ltr" {
                 (background())
-                (navbar(PAGES, route))
+                (navbar(pages, route))
                 main.content {
                     .container {
                         (content)

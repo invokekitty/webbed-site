@@ -3,6 +3,7 @@ use crate::layout::*;
 pub mod me;
 pub mod index;
 pub mod projects;
+pub mod servers;
 
 pub const PAGES: &'static [PageInfo] = &[
     PageInfo { title: "Home", route: "/" },

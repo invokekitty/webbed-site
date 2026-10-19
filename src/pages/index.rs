@@ -4,11 +4,12 @@ use maud::html;
 
 use crate::layout::*;
 use crate::components::*;
+use crate::pages::PAGES;
 
 
 #[get("/")]
 pub async fn get() -> impl Responder {
-    page("invoking my kitty", "/",
+    page(PAGES, "invoking my kitty", "/",
         grid! { [ "links main main", "links frens frens" ]; @530 [ "main", "links", "frens" ];
             links: {
                 .box {

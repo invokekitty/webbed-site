@@ -1,0 +1,7 @@
+@font-face {
+    font-family: 'waffle';
+    src: url('waffle-traced.ttf') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}

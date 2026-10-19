@@ -1,0 +1,20 @@
+@font-face {
+    font-family: 'tewi';
+    src: url('tewiregular.woff2') format('woff2'),
+        url('tewiregular.woff') format('woff'),
+        url('tewiregular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'tewi';
+    src: url('tewiBold.woff2') format('woff2'),
+        url('tewiBold.woff') format('woff'),
+        url('tewiBold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+

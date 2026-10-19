@@ -1,6 +1,8 @@
 @use 'colors.scss';
-@use 'fonts.scss';
 @forward 'colors.scss';
+@import url('/fonts/tiny5/stylesheet.css');
+@import url('/fonts/waffle/stylesheet.css');
+@import url('/fonts/tewi/stylesheet.css');
 
 @mixin geometric {
     text-rendering: geometricPrecision;

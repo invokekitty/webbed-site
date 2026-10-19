@@ -1,0 +1,50 @@
+@font-face {
+    font-family: 'Tiny5';
+    src: url('Tiny5-Regular.woff2') format('woff2'),
+        url('Tiny5-Regular.woff') format('woff'),
+        url('Tiny5-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Tiny5';
+    src: url('Tiny5-Regular_1.woff2') format('woff2'),
+        url('Tiny5-Regular_1.woff') format('woff'),
+        url('Tiny5-Regular_1.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Tiny5';
+    src: url('Tiny5-Regular_2.woff2') format('woff2'),
+        url('Tiny5-Regular_2.woff') format('woff'),
+        url('Tiny5-Regular_2.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Tiny5';
+    src: url('Tiny5-Regular_3.woff2') format('woff2'),
+        url('Tiny5-Regular_3.woff') format('woff'),
+        url('Tiny5-Regular_3.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Tiny5';
+    src: url('Tiny5-Regular_4.woff2') format('woff2'),
+        url('Tiny5-Regular_4.woff') format('woff'),
+        url('Tiny5-Regular_4.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
