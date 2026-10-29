@@ -1,5 +1,5 @@
 #![feature(decl_macro)]
-use std::io;
+use std::{env, io};
 
 use actix_web::{App, HttpServer};
 use actix_web_static_files::ResourceFiles;
@@ -31,7 +31,7 @@ async fn main() -> io::Result<()> {
     let args = Arguments::parse();
     let _ = SEERGYBIRTH.set(args.seergy_birth_date);
 
-    HttpServer::new(|| {
+    HttpServer::new(|| 
         App::new()
             .service(pages::index::get)
             .service(pages::me::get)
@@ -39,7 +39,7 @@ async fn main() -> io::Result<()> {
             .service(pages::servers::get)
             .service(styles::style)
             .service(ResourceFiles::new("/", generate()))
-    })
+    )
     .bind((args.bind_ip, args.port))?
     .run()
     .await

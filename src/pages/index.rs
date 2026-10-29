@@ -1,4 +1,6 @@
-use actix_web::{Responder, get};
+use actix_web::{get};
+use cached::once;
+use maud::Markup;
 #[allow(unused)]
 use maud::html;
 
@@ -8,9 +10,11 @@ use crate::pages::PAGES;
 
 
 #[get("/")]
-pub async fn get() -> impl Responder {
+#[once]
+pub async fn get() -> Markup {
     page(PAGES, "invoking my kitty", "/",
-        grid! { [ "links main main", "links frens frens" ]; @530 [ "main", "links", "frens" ];
+        grid! { 
+            [ "links main main", "links frens frens" ]; @530 [ "main", "links", "frens" ];
             links: {
                 .box {
                     ul."icon-list".fancy {
@@ -48,4 +52,12 @@ pub async fn get() -> impl Responder {
             }
         }
     )
+}
+
+fn friendlink(href: &str, tooltip: Option<&str>, img: &str, alt: &str) -> Markup {
+    html! {
+        a.friendlink href=(href) data-tooltip=[tooltip] {
+            img src=(img) alt=(alt);
+        }
+    }
 }

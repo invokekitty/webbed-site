@@ -1,8 +1,10 @@
 @use 'colors.scss';
 @forward 'colors.scss';
-@import url('/fonts/tiny5/stylesheet.css');
-@import url('/fonts/waffle/stylesheet.css');
-@import url('/fonts/tewi/stylesheet.css');
+$fonts: (tiny5, waffle, tewi);
+
+@each $font in $fonts {
+    @import url('/fonts/#{$font}/stylesheet.css');
+}
 
 @mixin geometric {
     text-rendering: geometricPrecision;

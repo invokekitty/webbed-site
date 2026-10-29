@@ -1,3 +1,5 @@
+use std::sync::LazyLock;
+
 use maud::{DOCTYPE, Markup, PreEscaped, html};
 
 use crate::{components::Icon};
@@ -42,10 +44,12 @@ pub fn page(pages: &[PageInfo], title: &str, route: &str, content: Markup) -> Ma
     }
 }
 
-fn background() -> Markup {
-    html! {
+fn background() -> &'static Markup {
+    static BACKGROUND: LazyLock<Markup> = LazyLock::new(|| html! {
         img.bg-img src="/images/bg.webp" alt="background";
-    }
+    });
+
+    &*BACKGROUND
 }
 
 pub struct PageInfo { pub title: &'static str, pub route: &'static str }

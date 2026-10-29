@@ -1,6 +1,6 @@
 use std::fmt::Write;
 
-use maud::{Markup, PreEscaped, Render, html};
+use maud::{PreEscaped, Render};
 
 pub const NBSP: PreEscaped<&str> = PreEscaped("&nbsp;");
 
@@ -94,14 +94,6 @@ pub macro iconlist($([$($props:tt)+])?$($icon:ident $(@[$($iconprops:tt)+])? $([
     }
 }}
 
-pub fn friendlink(href: &str, tooltip: Option<&str>, img: &str, alt: &str) -> Markup {
-    html! {
-        a.friendlink href=(href) data-tooltip=[tooltip] {
-            img src=(img) alt=(alt);
-        }
-    }
-}
-
 #[derive(Clone, Copy)]
 pub enum Platform {
     Codeberg,
@@ -121,27 +113,6 @@ impl Platform {
             Platform::CurseForge => (Icon::ShoppingCartIThink, "CurseForge", "peach", "https://curseforge.org/minecraft/mc-mods/"),
             Platform::AUR => (Icon::IUseArchBtw, "AUR", "blue", "https://aur.archlinux.org/packages/"),
             Platform::Site => (Icon::Safari, "Website", "sky", "")
-        }
-    }
-}
-
-pub fn project(id: &str, links: &[(Platform, &str)], deprecated: bool, content: Markup) -> Markup {
-    html! {
-        div #(id) .project {
-            @if deprecated {
-                span.deprecated-marker { (Icon::Warning)(NBSP)"Deprecated" }
-            }
-            (content)
-            span.fancy {
-                @for (index, (platform, link)) in links.iter().enumerate() {
-                    @let (icon, name, color, linkprefix) = platform.data();
-                    @let href = format!("{linkprefix}{link}");
-                    span {
-                        @if index != 0 { span.delim { "•" } }
-                        a href=(href) data-fg=(color) { (icon)(NBSP)(name) }
-                    }
-                }
-            }
         }
     }
 }

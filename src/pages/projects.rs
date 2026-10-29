@@ -1,4 +1,6 @@
-use actix_web::{Responder, get};
+use actix_web::get;
+use cached::once;
+use maud::Markup;
 use maud::html;
 
 use crate::layout::*;
@@ -6,7 +8,8 @@ use crate::components::*;
 use crate::pages::PAGES;
 
 #[get("/projects")]
-pub async fn get() -> impl Responder {
+#[once]
+pub async fn get() -> Markup {
     page(PAGES, "kittyprojects", "/projects", html! {
         h1 { "Projects i made" }
         hr.thicc;
@@ -56,4 +59,25 @@ pub async fn get() -> impl Responder {
             p { "A kotlin modding library that does alot, soon to be merged with kritter" }
         }))
     })
+}
+
+fn project(id: &str, links: &[(Platform, &str)], deprecated: bool, content: Markup) -> Markup {
+    html! {
+        div #(id) .project {
+            @if deprecated {
+                span.deprecated-marker { (Icon::Warning)(NBSP)"Deprecated" }
+            }
+            (content)
+            span.fancy {
+                @for (index, (platform, link)) in links.iter().enumerate() {
+                    @let (icon, name, color, linkprefix) = platform.data();
+                    @let href = format!("{linkprefix}{link}");
+                    span {
+                        @if index != 0 { span.delim { "•" } }
+                        a href=(href) data-fg=(color) { (icon)(NBSP)(name) }
+                    }
+                }
+            }
+        }
+    }
 }
