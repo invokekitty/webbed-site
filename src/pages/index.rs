@@ -32,13 +32,14 @@ pub async fn get() -> Markup {
                         r#"Haii im sery, dumbass cat that codes and enjoys music alot.
                         You can find projects and random shit i say here :3"#
                     }
-                    p {
-                        r#"
+                    p { r#"
                         Im an enby cat that lives somewhere in Europe (wont tell u where :3). I like coding,
                         mostly work on minecraft mods and other jvm-related stuff in kotlin, and pretty much anything
-                        else i ever feel like doing in rust (incuding "# a href="https://codeberg.org/sery/webbed-site" { "this site" } r#"!)
-
-                        "#
+                        else i ever feel like doing in rust (including "# a href="https://codeberg.org/sery/webbed-site" { "this site" } r#"!)"#
+                    }
+                    p { r#"    
+                        Uhmmm, i use linux btw :3. Currently using "# a href="https://chimera-linux.org" { "Chimera Linux" } r#"
+                            and "# a href="https://cachyos.org" { "CachyOS" }
                     }
                 }
             }

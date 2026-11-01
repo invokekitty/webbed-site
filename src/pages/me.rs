@@ -16,7 +16,7 @@ pub async fn get() -> impl Responder {
     let today = Utc::now();
     let seergyage = SEERGYBIRTH.get().and_then(|bd| today.years_since(*bd)).unwrap_or(14);
 
-    #[concurrent_cached(max_size = 2)]
+    #[concurrent_cached(max_size = 1)]
     async fn body(seergyage: u32) -> Markup {
         page(PAGES, "invoking the pronouns", "/me", html! {
             .box {
