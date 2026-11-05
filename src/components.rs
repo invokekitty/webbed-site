@@ -1,6 +1,6 @@
-use std::{arch::aarch64::uint16x4x3_t, fmt::Write};
+use std::fmt::Write;
 
-use maud::{ComponentBody, Markup, PreEscaped, Render, write_html};
+use maud::{ComponentBody, PreEscaped, Render, write_html};
 
 pub const NBSP: PreEscaped<&str> = PreEscaped("&nbsp;");
 
@@ -99,7 +99,7 @@ impl Render for IconLi<'_> {
 
 pub macro grid($($($item:ident)+),+$(;$size:literal => [$($($sizeditem:ident)+),+])*) {{
     crate::components::GridLayout::new(
-    crate::components::GridDefinition(None, &[$(concat!($(stringify!($item), " "),+)),+]),
+        crate::components::GridDefinition(None, &[$(concat!($(stringify!($item), " "),+)),+]),
         &[$(crate::components::GridDefinition(Some($size), &[$(concat!($(stringify!($sizeditem), " "),+)),+])),*]
     )
 }}

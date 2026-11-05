@@ -1,7 +1,4 @@
-use std::sync::LazyLock;
-
-use cached::once;
-use maud::{ComponentBody, DOCTYPE, Markup, PreEscaped, Render, html, write_html};
+use maud::{ComponentBody, DOCTYPE, PreEscaped, Render, write_html};
 
 use crate::{components::Icon, pages::PAGES};
 
