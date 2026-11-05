@@ -1,64 +1,97 @@
 use actix_web::{get};
 use cached::once;
 use maud::Markup;
+use maud::Render;
 #[allow(unused)]
 use maud::html;
+use maud::write_html;
 
 use crate::layout::*;
 use crate::components::*;
-use crate::pages::PAGES;
-
-
 #[get("/")]
 #[once]
 pub async fn get() -> Markup {
-    page(PAGES, "invoking my kitty", "/",
-        grid! { 
-            [ "links main main", "links frens frens" ]; @530 [ "main", "links", "frens" ];
-            links: {
-                .box {
-                    ul."icon-list".fancy {
-                        (iconli! ( T [data-fg-force="lavender"] { a href="https://serenovv.tumblr.com" { "Tumblr" } } ))
-                        (iconli! ( Photo [data-fg-force="peach"] { a href="https://www.instagram.com/stupidcatcreacher/" { "Instagram" } } ))
-                        (iconli! ( Music [data-fg-force="red"] { a href="https://music.apple.com/profile/sery" { "Apple Music" } } ))
-                        (iconli! ( SourceCode [data-fg-force="sapphire"] { a href="https://codeberg.org/sery" { "Codebergs" } } ))
+    let layout = grid! [
+        links main main,
+        links frens frens;
+        700 => [
+            links main,
+            links frens
+        ];
+        530 => [
+            main,
+            links,
+            frens
+        ]
+    ];
+    html! {
+        Page title="invoking my kitty" route="/" {
+            Grid scope=(scope!()) layout=(layout) {
+                Area label="links" {
+                    .box {
+                        ul.icon-list.fancy {
+                            IconLi icon=(Icon::T) fg-force="lavender" { 
+                                a href="https://serenovv.tumblr.com" { "Tumblr" } 
+                            }
+                            IconLi icon=(Icon::Photo) fg-force="peach" { 
+                                a href="https://www.instagram.com/stupidcatcreacher/" { "Instagram" } 
+                            }
+                            IconLi icon=(Icon::Music) fg-force="red" {
+                                a href="https://music.apple.com/profile/sery" { "Apple Music" }
+                            }
+                            IconLi icon=(Icon::SourceCode) fg-force="sapphire" {
+                                a href="https://codeberg.org/sery" { "Codebergs" }
+                            }
+                            IconLi icon=(Icon::Cat) fg-force="text" {
+                                a href="https://github.com/invokekitty" { "Github" }
+                            }
+                        }
                     }
                 }
-            }
-            main: {
-                .box {
-                    h2 { "Welcome to sery's webbed site :3" }
-                    p {
-                        r#"Haii im sery, dumbass cat that codes and enjoys music alot.
-                        You can find projects and random shit i say here :3"#
-                    }
-                    p { r#"
-                        Im an enby cat that lives somewhere in Europe (wont tell u where :3). I like coding,
-                        mostly work on minecraft mods and other jvm-related stuff in kotlin, and pretty much anything
-                        else i ever feel like doing in rust (including "# a href="https://codeberg.org/sery/webbed-site" { "this site" } r#"!)"#
-                    }
-                    p { r#"    
-                        Uhmmm, i use linux btw :3. Currently using "# a href="https://chimera-linux.org" { "Chimera Linux" } r#"
-                            and "# a href="https://cachyos.org" { "CachyOS" }
+                Area label="main" {
+                    .box {
+                        h2 { "Welcome to sery's webbed site :3" }
+                        p {
+                            r#"Haii im sery, dumbass cat that codes and enjoys music alot.
+                               You can find projects and random shit i say here :3"#
+                        }
+                        p { 
+                            r#"Im an enby cat that lives somewhere in Europe (wont tell u where :3). I like coding,
+                               mostly work on minecraft mods and other jvm-related stuff in kotlin, and pretty much anything
+                               else i ever feel like doing in rust (including "# a href="https://codeberg.org/sery/webbed-site" { "this site" } r#"!)"#
+                        }
+                        p { 
+                            r#"Uhmmm, i use linux btw :3. Currently using "# a href="https://chimera-linux.org" { "Chimera Linux" } r#"
+                               and "# a href="https://cachyos.org" { "CachyOS" }
+                        }
                     }
                 }
-            }
-            frens: {
-                (friendlink ("#", Some("Add me to your site :3"), "/banners/me.webp", "Me"))
-                (friendlink ("https://kibbyc.at", Some("skeedge"), "/banners/riley.webp", "my cute catburger"))
-                (friendlink ("https://mayaqq.dev", None, "https://mayaqq.dev/assets/88x31/me.gif", "estrogen puppy"))
-                (friendlink ("https://resolv.moe", None, "https://resolv.moe/friends/resolv.png?v2", "Maybe"))
-                (friendlink ("https://dynamicdispat.ch", None, "https://dynamicdispat.ch/assets/img/button.png", "dyn is cute and gay"))
-                (friendlink ("https://awruff.dog", None, "https://awruff.dog/assets/88x31.png", "shinyyy ouppy :3"))
+                Area label="frens" {
+                    Friendlink href="#" tooltip="Add me to your site :3" img="/banners/me.webp" alt="Me";
+                    Friendlink href="https://kibbyc.at" tooltip="skeedge" img="/banners/riley.webp" alt="my cute catburger";
+                    Friendlink href="https://mayaqq.dev" img="https://mayaqq.dev/assets/88x31/me.gif" alt="estrogen puppy";
+                    Friendlink href="https://resolv.moe" img="https://resolv.moe/friends/resolv.png?v2" alt="Maybe";
+                    Friendlink href="https://dynamicdispat.ch" img="https://dynamicdispat.ch" alt="dyn is cute and gay";
+                    Friendlink href="https://awruff.dog" img="https://awruff.dog/assets/88x31.png" alt="shinyy ouppy :3";
+                }
             }
         }
-    )
+    }
 }
 
-fn friendlink(href: &str, tooltip: Option<&str>, img: &str, alt: &str) -> Markup {
-    html! {
-        a.friendlink href=(href) data-tooltip=[tooltip] {
-            img src=(img) alt=(alt);
+struct Friendlink<'a> {
+    href: &'a str,
+    img: &'a str,
+    alt: &'a str,
+    tooltip: Option<&'a str> = None
+}
+
+impl Render for Friendlink<'_> {
+    fn render_to(&self, buffer: &mut String) {
+        write_html! { buffer =>
+            a.friendlink href=(self.href) data-tooltip=[self.tooltip] {
+                img src=(self.img) alt=(self.alt);
+            }
         }
     }
 }

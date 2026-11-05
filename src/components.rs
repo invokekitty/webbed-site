@@ -1,8 +1,10 @@
-use std::fmt::Write;
+use std::{arch::aarch64::uint16x4x3_t, fmt::Write};
 
-use maud::{PreEscaped, Render};
+use maud::{ComponentBody, Markup, PreEscaped, Render, write_html};
 
 pub const NBSP: PreEscaped<&str> = PreEscaped("&nbsp;");
+
+pub macro scope() { concat!(module_path!(), "-", line!(), "-", column!()) }
 
 #[allow(dead_code)]
 #[derive(Clone, Copy)]
@@ -54,9 +56,9 @@ impl Render for Icon {
     //     html! { span.icon { (chr) } }
     // } is what i would do, if i wasnt an insane performance freak
     fn render_to(&self, buffer: &mut String) {
-        buffer.push_str("<span class=\"icon\">");
-        self.to_raw().render_to(buffer);
-        buffer.push_str("</span>");
+        write_html! { buffer =>
+            span.icon { (self.to_raw()) }
+        }
     }
 }
 
@@ -74,55 +76,102 @@ impl Render for RawIcon {
     }
 }
 
-pub macro iconli($icon:ident $(@$tooltip:literal)? $([$($attrs:tt)+])? {$($content:tt)*}) {{
-    maud::html! {
-        li $($($attrs)+)? data-icon-list {
-            (Icon::$icon)
-            span { $($content)* }
-        }
-    }
-}}
-
-pub macro iconlist($([$($props:tt)+])?$($icon:ident $(@[$($iconprops:tt)+])? $([$($liprops:tt)+])? {$($content:tt)*})*) {{
-    maud::html! {
-        ul.icon-list $($($props)+)? {$(
-            li $($($liprops)+)? {
-                span.icon $($($iconprops)+)? { (Icon::$icon.to_raw()) }
-                span { $($content)* }
-            }
-        )*}
-    }
-}}
-
-#[derive(Clone, Copy)]
-pub enum Platform {
-    Codeberg,
-    Github,
-    Modrinth,
-    CurseForge,
-    AUR,
-    Site
+pub struct IconLi<'a> {
+    pub icon: Icon,
+    pub tooltip: Option<&'a str> = None,
+    pub fg: Option<&'a str> = None,
+    pub bg: Option<&'a str> = None,
+    pub fg_force: Option<&'a str> = None,
+    pub fancy: bool = false,
+    pub body: ComponentBody<'a>
 }
 
-impl Platform {
-    pub fn data(&self) -> (Icon, &'static str, &'static str, &'static str) {
-        match self {
-            Platform::Codeberg => (Icon::SourceCode, "Codeberg", "sapphire", "https://codeberg.org/"),
-            Platform::Github => (Icon::Cat, "Github", "text", "https://github.com/"),
-            Platform::Modrinth => (Icon::Cog, "Modrinth", "green", "https://mods.gay/"),
-            Platform::CurseForge => (Icon::ShoppingCartIThink, "CurseForge", "peach", "https://curseforge.org/minecraft/mc-mods/"),
-            Platform::AUR => (Icon::IUseArchBtw, "AUR", "blue", "https://aur.archlinux.org/packages/"),
-            Platform::Site => (Icon::Safari, "Website", "sky", "")
+impl Render for IconLi<'_> {
+    fn render_to(&self, buffer: &mut String) {
+        write_html! { buffer =>
+            li .fancy[self.fancy] data-fg=[self.fg] data-fg-force=[self.fg_force] data-bg=[self.bg] data-tooltip=[self.tooltip] {
+                (self.icon)
+                span { (self.body) }
+            }
         }
+    }
+}
+
+pub macro grid($($($item:ident)+),+$(;$size:literal => [$($($sizeditem:ident)+),+])*) {{
+    crate::components::GridLayout::new(
+    crate::components::GridDefinition(None, &[$(concat!($(stringify!($item), " "),+)),+]),
+        &[$(crate::components::GridDefinition(Some($size), &[$(concat!($(stringify!($sizeditem), " "),+)),+])),*]
+    )
+}}
+
+pub struct Grid<'a> {
+    pub scope: &'a str,
+    pub layout: GridLayout<'a>,
+    pub auto_rows: bool = false,
+    pub aut_cols: bool = false,
+    pub body: ComponentBody<'a>
+}
+
+impl Render for Grid<'_> {
+    fn render_to(&self, buffer: &mut String) {
+        let GridLayout { root, sized } = self.layout;
+        write_html! { buffer =>
+            style {
+                (root.scoped(self.scope))
+                @for definition in sized {
+                    (definition.scoped(self.scope))
+                }
+            }
+            div.grid .auto-rows[self.auto_rows] .auto-cols[self.aut_cols] data-scope=(self.scope) {
+                (self.body)
+            }
+        }
+    }
+}
+
+pub struct Area<'a> {
+    pub id: Option<&'a str> = None,
+    pub class: Option<&'a str> = None,
+    pub label: &'a str,
+    pub body: ComponentBody<'a>
+}
+
+impl Render for Area<'_> {
+    fn render_to(&self, buffer: &mut String) {
+        let area = "grid-area: ".to_owned() + self.label;
+        write_html! { buffer =>
+            div id=[self.id] class=[self.class] style=(area) {
+                (self.body)
+            }
+        }
+    }
+}
+#[derive(Clone, Copy)]
+pub struct GridLayout<'a> {
+    root: GridDefinition<'a>,
+    sized: &'a [GridDefinition<'a>]
+}
+
+impl<'a> GridLayout<'a> {
+    pub fn new(root: GridDefinition<'a>, sized: &'a [GridDefinition<'a>]) -> Self {
+        GridLayout { root, sized }
     }
 }
 
 // WAAYY too complicated grid generator impl
-pub struct GridDefinition<'a>(pub Option<u32>, pub &'a [&'a str], pub &'static str);
+#[derive(Clone, Copy)]
+pub struct GridDefinition<'a>(pub Option<u16>, pub &'a [&'a str]);
+impl<'a> GridDefinition<'a> {
+    fn scoped(self, scope: &'a str) -> ScopedDefinition<'a> {
+        ScopedDefinition(self, scope)
+    }
+}
 
-impl Render for GridDefinition<'_> {
+pub struct ScopedDefinition<'a>(pub GridDefinition<'a>, pub &'a str);
+
+impl Render for ScopedDefinition<'_> {
     fn render_to(&self, buffer: &mut String) {
-        let GridDefinition(size, rows, scope) = self;
+        let ScopedDefinition(GridDefinition(size, rows), scope) = self;
         let mut depth: u8 = 0;
         if let Some(size) = size {
             depth += 1;
@@ -142,28 +191,29 @@ impl Render for GridDefinition<'_> {
         }
     }
 }
-
-pub macro grid($($auto:ident;)?[$($row:literal),*];$($(@$px:literal[$($row_px:literal),*]);*;)?$($area:ident:{$($content:tt)*})*) {{
-    const SCOPE: &str = concat!(module_path!(), "-", line!(), "-", column!());
-    let _auto: bool = false $(|| stringify!($auto) == "auto")?;
-    let _auto_rows: bool = _auto $(|| stringify!($auto) == "autorows")?;
-    let _auto_cols: bool = _auto $(|| stringify!($auto) == "autocols")?;
-    let __rootdefinition = GridDefinition(None, &[$($row,)*], SCOPE);
-    let __sizeddefinitions: &[GridDefinition<'_>] = &[];
-    $(let __sizeddefinitions: &[GridDefinition<'_>] =
-        &[$(GridDefinition(Some($px),&[$($row_px,)*], SCOPE)),*];)?
-
-    maud::html! {
-        style {
-            (__rootdefinition)
-            @for _sd in __sizeddefinitions {
-                (_sd)
-            }
-        }
-        .grid.auto-columns[_auto_cols].auto-rows[_auto_rows] data-scope=(SCOPE) {
-            $(div data-scope=(SCOPE) style=(concat!("grid-area:", stringify!($area), ";")) {
-                $($content)*
-            })*
-        }
-    }
-}}
+//
+//
+// pub macro grid($($auto:ident;)?[$($row:literal),*];$($(@$px:literal[$($row_px:literal),*]);*;)?$($area:ident:{$($content:tt)*})*) {{
+//     const SCOPE: &str = concat!(module_path!(), "-", line!(), "-", column!());
+//     let _auto: bool = false $(|| stringify!($auto) == "auto")?;
+//     let _auto_rows: bool = _auto $(|| stringify!($auto) == "autorows")?;
+//     let _auto_cols: bool = _auto $(|| stringify!($auto) == "autocols")?;
+//     let __rootdefinition = GridDefinition(None, &[$($row,)*], SCOPE);
+//     let __sizeddefinitions: &[GridDefinition<'_>] = &[];
+//     $(let __sizeddefinitions: &[GridDefinition<'_>] =
+//         &[$(GridDefinition(Some($px),&[$($row_px,)*], SCOPE)),*];)?
+//
+//     maud::html! {
+//         style {
+//             (__rootdefinition)
+//             @for _sd in __sizeddefinitions {
+//                 (_sd)
+//             }
+//         }
+//         .grid.auto-columns[_auto_cols].auto-rows[_auto_rows] data-scope=(SCOPE) {
+//             $(div data-scope=(SCOPE) style=(concat!("grid-area:", stringify!($area), ";")) {
+//                 $($content)*
+//             })*
+//         }
+//     }
+// }}

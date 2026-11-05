@@ -1,4 +1,4 @@
-#![feature(decl_macro)]
+#![feature(decl_macro, default_field_values)]
 use std::{env, io};
 
 use actix_web::{App, HttpServer};
