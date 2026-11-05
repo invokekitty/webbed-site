@@ -74,7 +74,7 @@ impl Render for Navbar<'_> {
                 label.navbar-text for="nav-check" {
                     span style="font-size:75%" { (Icon::Menu) }
                 }
-                nav.nav-menu style=(format!("--height: {}px", 53.33 * self.pages.len() as f32)) {
+                nav.nav-menu style=(format_args!("--height: {}px", 53.33 * self.pages.len() as f32)) {
                     @for page in self.pages {
                         a.nav-item .active[page.route == self.route] href=(page.route) {
                             (page.title)
