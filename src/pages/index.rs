@@ -72,7 +72,7 @@ pub async fn get() -> Markup {
                     Friendlink href="https://mayaqq.dev" img="https://mayaqq.dev/assets/88x31/me.gif" alt="estrogen puppy";
                     Friendlink href="https://resolv.moe" img="https://resolv.moe/friends/resolv.png?v2" alt="Maybe";
                     Friendlink href="https://dynamicdispat.ch" img="https://dynamicdispat.ch" alt="dyn is cute and gay";
-                    Friendlink href="https://awruff.dog" img="https://awruff.dog/assets/88x31.png" alt="shinyy ouppy :3";
+                    Friendlink href="https://awruff.codeberg.page" img="https://awruff.codeberg.page/assets/88x31.png" alt="shinyy ouppy :3";
                 }
             }
         }
