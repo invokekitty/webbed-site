@@ -1,7 +1,7 @@
-use actix_web::{HttpRequest, Responder, get};
+use actix_web::{get, HttpRequest, Responder};
 
 
 #[get("/servers")]
-pub async fn get(req: HttpRequest) -> impl Responder {
+pub async fn servers(req: HttpRequest) -> impl Responder {
     req.query_string().to_string()
 }

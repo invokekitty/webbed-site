@@ -20,6 +20,9 @@ markdown = "1.0.0"
 maud = { git = "https://github.com/invokekitty/maudx", features = [ "actix-web", "default-fields" ] }
 rustls = "0.23.45"
 static-files = "0.3.1"
+diesel = { version = "2.3.14", features = ["sqlite", "returning_clauses_for_sqlite_3_35", "chrono", "r2d2"] }
+libsqlite3-sys = { version = "0.38.2", features = ["bundled"] }
+r2d2 = "0.8.10"
 
 [build-dependencies]
 static-files = "0.3.1"

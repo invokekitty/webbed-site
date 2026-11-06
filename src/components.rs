@@ -102,10 +102,10 @@ impl Render for IconLi<'_> {
 // }}
 // 
 pub macro grid {
-    {_ => [$($($item:ident)+),+];$($size:literal => [$($($sizeditem:ident)+),+]);*} => {
+    {_ => [$($($item:ident)+),+];$($size:literal => [$($($sized_item:ident)+),+]);*} => {
         crate::components::GridLayout::new(
             crate::components::GridDefinition(None, &[$(concat!($(stringify!($item), " "),+)),+]),
-            &[$(crate::components::GridDefinition(Some($size), &[$(concat!($(stringify!($sizeditem), " "),+)),+])),*]
+            &[$(crate::components::GridDefinition(Some($size), &[$(concat!($(stringify!($sized_item), " "),+)),+])),*]
         )
     },
     [$($($item:ident)+),+] => {

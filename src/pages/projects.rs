@@ -12,7 +12,7 @@ use crate::layout::Page;
 
 #[get("/projects")]
 #[once]
-pub async fn get() -> Markup {
+pub async fn projects() -> Markup {
     html! {
         Page title="invoking the projects" route="/projects" {
             h1 { "Projects i made" }

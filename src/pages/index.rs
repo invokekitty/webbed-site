@@ -1,4 +1,4 @@
-use actix_web::{get};
+use actix_web::get;
 use cached::once;
 use maud::Markup;
 use maud::Render;
@@ -27,7 +27,7 @@ const LAYOUT: GridLayout = grid! {
 
 #[get("/")]
 #[once]
-pub async fn get() -> Markup {
+pub async fn index() -> Markup {
     html! {
         Page title="invoking my kitty" route="/" {
             Grid scope=(scope!()) layout=(LAYOUT) {
@@ -75,10 +75,12 @@ pub async fn get() -> Markup {
                     Friendlink href="https://kibbyc.at" tooltip="skeedge" img="/banners/riley.webp" alt="my cute catburger";
                     Friendlink href="https://mayaqq.dev" img="https://mayaqq.dev/assets/88x31/me.gif" alt="estrogen puppy";
                     Friendlink href="https://resolv.moe" img="https://resolv.moe/friends/resolv.png?v2" alt="Maybe";
-                    Friendlink href="https://dynamicdispat.ch" img="https://dynamicdispat.ch" alt="dyn is cute and gay";
+                    Friendlink href="https://dynamicdispat.ch" img="https://dynamicdispat.ch/assets/img/button.png" alt="dyn is cute and gay";
                     Friendlink href="https://awruff.codeberg.page" img="https://awruff.codeberg.page/assets/88x31.png" alt="shinyy ouppy :3";
                 }
             }
+            hr.thicc;
+
         }
     }
 }
