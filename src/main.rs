@@ -6,8 +6,6 @@ use actix_web_static_files::ResourceFiles;
 use chrono::{DateTime, TimeZone, Utc};
 use clap::Parser;
 
-use crate::pages::me::SEERGYBIRTH;
-
 include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 
 mod styles;
@@ -29,12 +27,11 @@ struct Arguments {
 #[actix_web::main]
 async fn main() -> io::Result<()> {
     let args = Arguments::parse();
-    let _ = SEERGYBIRTH.set(args.seergy_birth_date);
+    // let _ = SEERGYBIRTH.set(args.seergy_birth_date);
 
     HttpServer::new(|| 
         App::new()
             .service(pages::index::get)
-            .service(pages::me::get)
             .service(pages::projects::get)
             .service(pages::servers::get)
             .service(styles::style)

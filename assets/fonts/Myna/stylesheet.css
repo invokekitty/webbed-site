@@ -1,0 +1,40 @@
+@font-face {
+    font-family: 'Myna';
+    src: url('Myna-Regular.woff2') format('woff2'),
+        url('Myna-Regular.woff') format('woff'),
+        url('Myna-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Myna';
+    src: url('Myna-BoldItalic.woff2') format('woff2'),
+        url('Myna-BoldItalic.woff') format('woff'),
+        url('Myna-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Myna';
+    src: url('Myna-Bold.woff2') format('woff2'),
+        url('Myna-Bold.woff') format('woff'),
+        url('Myna-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Myna';
+    src: url('Myna-RegularItalic.woff2') format('woff2'),
+        url('Myna-RegularItalic.woff') format('woff'),
+        url('Myna-RegularItalic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+

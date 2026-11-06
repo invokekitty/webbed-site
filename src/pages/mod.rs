@@ -1,13 +1,13 @@
 use crate::layout::*;
 
-pub mod me;
 pub mod index;
+pub mod posts;
 pub mod projects;
 pub mod servers;
 
 pub const PAGES: &'static [PageInfo] = &[
-    PageInfo { title: "Home", route: "/" },
-    PageInfo { title: "Pronouns n stuff", route: "/me" },
-    PageInfo { title: "Projects", route: "/projects" },
-    PageInfo { title: "Servers", route: "/servers" }
+    PageInfo { title: "me", route: "/" },
+    PageInfo { title: "posts", route: "/posts" },
+    PageInfo { title: "projects", route: "/projects" },
+    PageInfo { title: "servers", route: "/servers" }
 ];

@@ -97,12 +97,24 @@ impl Render for IconLi<'_> {
     }
 }
 
-pub macro grid($($($item:ident)+),+$(;$size:literal => [$($($sizeditem:ident)+),+])*) {{
-    crate::components::GridLayout::new(
-        crate::components::GridDefinition(None, &[$(concat!($(stringify!($item), " "),+)),+]),
-        &[$(crate::components::GridDefinition(Some($size), &[$(concat!($(stringify!($sizeditem), " "),+)),+])),*]
-    )
-}}
+// pub macro grid($($($item:ident)+),+$(;$size:literal => [$($($sizeditem:ident)+),+])*) {{
+
+// }}
+// 
+pub macro grid {
+    {_ => [$($($item:ident)+),+];$($size:literal => [$($($sizeditem:ident)+),+]);*} => {
+        crate::components::GridLayout::new(
+            crate::components::GridDefinition(None, &[$(concat!($(stringify!($item), " "),+)),+]),
+            &[$(crate::components::GridDefinition(Some($size), &[$(concat!($(stringify!($sizeditem), " "),+)),+])),*]
+        )
+    },
+    [$($($item:ident)+),+] => {
+        crate::components::GridLayout::new(
+            crate::components::GridDefinition(None, &[$(concat!($(stringify!($item), " "),+)),+]),
+            &[]
+        )
+    }
+}
 
 pub struct Grid<'a> {
     pub scope: &'a str,
@@ -153,7 +165,7 @@ pub struct GridLayout<'a> {
 }
 
 impl<'a> GridLayout<'a> {
-    pub fn new(root: GridDefinition<'a>, sized: &'a [GridDefinition<'a>]) -> Self {
+    pub const fn new(root: GridDefinition<'a>, sized: &'a [GridDefinition<'a>]) -> Self {
         GridLayout { root, sized }
     }
 }
