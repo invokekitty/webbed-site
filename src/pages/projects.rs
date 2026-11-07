@@ -78,7 +78,7 @@ impl Render for Project<'_> {
         write_html! { buffer =>
             #(self.id) .project {
                 @if self.deprecated {
-                    span.deprecated-marker { (Icon::Warning)(NBSP)"Deprecated" }
+                    span.deprecated-marker { Icon::Warning; (NBSP)"Deprecated" }
                 }
                 @if let Some(ref body) = self.body {
                     (body)

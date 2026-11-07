@@ -1,4 +1,4 @@
-use actix_web::web::ServiceConfig;
+use actix_web::web::{ServiceConfig, get};
 use crate::layout::*;
 
 mod index;
@@ -13,10 +13,7 @@ pub const PAGES: &'static [PageInfo] = &[
     PageInfo { title: "servers", route: "/servers" }
 ];
 
-pub fn pages(config: &mut ServiceConfig) {
-    let x = &index::index;
-
-
+pub fn configure(config: &mut ServiceConfig) {
     config.service(index::index)
         .service(posts::posts)
         .service(posts::posts_redirect)

@@ -1,12 +1,16 @@
 #![feature(decl_macro, default_field_values)]
+use std::path::Path;
+use std::sync::Arc;
 use std::{env, io};
 use std::error::Error;
+use actix_web::web::Data;
 use actix_web::{App, HttpServer};
 use actix_web_static_files::ResourceFiles;
+use brotli::enc::BrotliEncoderParams;
 use chrono::{DateTime, TimeZone, Utc};
 use clap::Parser;
-use diesel::r2d2::ConnectionManager;
-use diesel::SqliteConnection;
+use sqlx::sqlite::{SqliteConnectOptions, SqliteError, SqlitePoolOptions};
+use sqlx::{ConnectOptions, Sqlite, SqliteConnection, SqlitePool, migrate, query, raw_sql, sqlite};
 
 include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 
@@ -20,7 +24,7 @@ mod api;
 #[command(version)]
 struct Arguments {
     /// Ip address to bind my site to
-    #[arg(short('i'), long, default_value_t="127.0.0.1".to_string())]
+    #[arg(short('i'), long, default_value_t="localhost".to_string())]
     bind_ip: String,
     /// Port to use
     #[arg(short, long, default_value_t=8080)]
@@ -33,23 +37,53 @@ struct Arguments {
     db_path: String
 }
 
-type DbPool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
+struct SiteData {
+    database: SqlitePool,
+    seergy_birth_date: DateTime<Utc>
+}
 
 #[actix_web::main]
 async fn main() -> Result<(), Box<dyn Error>>{
     let args = Arguments::parse();
-    let pool = DbPool::builder()
-        .build(ConnectionManager::new(args.db_path))?;
+    let dbpool = init_db(args.db_path).await?;
 
-    HttpServer::new(move ||
-        App::new()
-            .app_data(pool.clone())
-            .configure(pages::pages)
+    HttpServer::new(move || App::new()
+            .app_data(Data::new(SiteData { 
+                database: dbpool.clone(),
+                seergy_birth_date: args.seergy_birth_date
+            }))
+            .configure(pages::configure)
             .service(styles::style)
-            .service(ResourceFiles::new("/", generate()))
-        )
+            .service(ResourceFiles::new("/", generate())))
         .bind((args.bind_ip, args.port))?
         .run()
         .await
         .map_err(Box::from)
+}
+
+
+async fn init_db(db_path: impl AsRef<Path>) -> Result<SqlitePool, sqlx::Error> {
+    let pool = SqlitePoolOptions::new()
+        .connect_with(SqliteConnectOptions::new()
+                .filename(db_path)
+                .create_if_missing(true)
+                .foreign_keys(true))
+        .await?;    
+
+    raw_sql(r#"
+        CREATE TABLE IF NOT EXISTS posts (
+            id INTEGER PRIMARY KEY,
+            date INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            summary TEXT,
+            content BLOB NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS comments (
+            
+        );
+    "#)
+    .execute(&pool)
+    .await?;
+
+    Ok(pool)
 }
