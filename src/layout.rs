@@ -1,13 +1,13 @@
 use maud::{ComponentBody, DOCTYPE, PreEscaped, Render, write_html};
 
+use crate::pages::PageInfo;
 use crate::{components::Icon, pages::PAGES};
-
-pub struct PageInfo { pub title: &'static str, pub route: &'static str }
 
 pub struct Page<'a> {
     pub title: &'a str,
     pub route: &'a str,
     pub body: ComponentBody<'a>,
+    pub custom_container_class: Option<&'a str> = None,
     pub pages: &'a [PageInfo] = PAGES
 }
 
@@ -20,7 +20,7 @@ impl Render for Page<'_> {
                     title { (self.title) }
                     meta charset="UTF-8";
                     meta name="viewport" content="width=device-width,initial-scale=1.0";
-                    link rel="icon" href="/favicon.ico";
+                    link rel="icon" href="/assets/favicon.ico";
                     link rel="stylesheet" href="/styles/style.css";
                     link rel="stylesheet" href="/api/meow";
                 }
@@ -28,7 +28,7 @@ impl Render for Page<'_> {
                     Background;
                     Navbar pages=(self.pages) route=(self.route);
                     main.content {
-                        .container {
+                        div class=(if let Some(c) = self.custom_container_class { c } else { "container" }) {
                             (self.body)
                         }
                     }
@@ -56,7 +56,7 @@ pub struct Background;
 impl Render for Background {
     fn render_to(&self, buffer: &mut String) {
         write_html! { buffer =>
-            img.bg-img src="/images/bg.webp" alt="background" aria-hidden="true";
+            img.bg-img src="/assets/images/bg.webp" alt="background" aria-hidden="true";
         }
     }
 }

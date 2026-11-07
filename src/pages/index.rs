@@ -25,7 +25,6 @@ const LAYOUT: GridLayout = grid! {
     ]
 };
 
-#[get("/")]
 #[once]
 pub async fn index() -> Markup {
     html! {
@@ -53,7 +52,7 @@ pub async fn index() -> Markup {
                     }
                 }
                 Area label="main" {
-                    .box {
+                    //.box {
                         h2 { "sery"(NBSP)(NBSP)"•"(NBSP)(NBSP)"they/she" }
                         p {
                             r#"Haii im sery, dumbass cat that codes and enjoys music alot.
@@ -68,18 +67,17 @@ pub async fn index() -> Markup {
                             r#"Uhmmm, i use linux btw :3. Currently using "# a href="https://chimera-linux.org" { "Chimera Linux" } r#"
                                and "# a href="https://cachyos.org" { "CachyOS" }
                         }
-                    }
+                    //}
                 }
                 Area label="frens" {
-                    Friendlink href="#" tooltip="Add me to your site :3" img="/banners/me.webp" alt="Me";
-                    Friendlink href="https://kibbyc.at" tooltip="skeedge" img="/banners/riley.webp" alt="my cute catburger";
+                    Friendlink href="#" tooltip="Add me to your site :3" img="/assets/banners/me.webp" alt="Me";
+                    Friendlink href="https://kibbyc.at" tooltip="skeedge" img="/assets/banners/riley.webp" alt="my cute catburger";
                     Friendlink href="https://mayaqq.dev" img="https://mayaqq.dev/assets/88x31/me.gif" alt="estrogen puppy";
                     Friendlink href="https://resolv.moe" img="https://resolv.moe/friends/resolv.png?v2" alt="Maybe";
                     Friendlink href="https://dynamicdispat.ch" img="https://dynamicdispat.ch/assets/img/button.png" alt="dyn is cute and gay";
                     Friendlink href="https://awruff.codeberg.page" img="https://awruff.codeberg.page/assets/88x31.png" alt="shinyy ouppy :3";
                 }
             }
-            hr.thicc;
 
         }
     }

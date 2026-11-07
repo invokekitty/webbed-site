@@ -3,7 +3,7 @@
 $fonts: (tiny5, waffle, tewi);
 
 @each $font in $fonts {
-    @import url('/fonts/#{$font}/stylesheet.css');
+    @import url('/assets/fonts/#{$font}/stylesheet.css');
 }
 
 @mixin geometric {

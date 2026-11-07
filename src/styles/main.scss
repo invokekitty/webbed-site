@@ -171,6 +171,27 @@ div.grid {
     }
 }
 
+.text404 {
+    font-size: 5rem;
+    width: 100%;
+    text-align: center;
+}
+
+.box404 {
+    @include border;
+    padding: 20px;
+}
+
+.container404 {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+    min-width: fit-content;
+    width: 80vw;
+    max-width: 400px !important;
+}
+
 @view-transition {
     navigation: auto;
 }

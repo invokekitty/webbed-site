@@ -10,7 +10,6 @@ use Platform::*;
 use crate::components::*;
 use crate::layout::Page;
 
-#[get("/projects")]
 #[once]
 pub async fn projects() -> Markup {
     html! {

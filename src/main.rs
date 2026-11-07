@@ -1,9 +1,12 @@
 #![feature(decl_macro, default_field_values)]
-use std::path::Path;
+#![feature(path_trailing_sep)]
+#![feature(range_into_bounds)]
+
+use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::{env, io};
 use std::error::Error;
-use actix_web::web::Data;
+use actix_web::web::{get, Data, to, QueryConfig};
 use actix_web::{App, HttpServer};
 use actix_web_static_files::ResourceFiles;
 use brotli::enc::BrotliEncoderParams;
@@ -29,32 +32,36 @@ struct Arguments {
     /// Port to use
     #[arg(short, long, default_value_t=8080)]
     port: u16,
+    /// Path to db file
+    #[arg(long, default_value=".")]
+    data_dir: PathBuf,
     /// My birthed date
     #[arg(long, default_value_t=Utc.with_ymd_and_hms(2001, 1, 1, 0, 0, 0).unwrap())]
-    seergy_birth_date: DateTime<Utc>,
-    /// Path to db file
-    #[arg(long, default_value_t="seergysite.db".to_string())]
-    db_path: String
+    seergy_birth_date: DateTime<Utc>
 }
 
-struct SiteData {
-    database: SqlitePool,
-    seergy_birth_date: DateTime<Utc>
+pub struct SiteData {
+    pub database: SqlitePool,
+    pub seergy_birth_date: DateTime<Utc>
 }
 
 #[actix_web::main]
 async fn main() -> Result<(), Box<dyn Error>>{
-    let args = Arguments::parse();
-    let dbpool = init_db(args.db_path).await?;
+    let mut args = Arguments::parse();
+    args.data_dir.push_trailing_sep();
+
+    let db = init_db(args.data_dir.with_file_name("skeegs.db")).await?;
 
     HttpServer::new(move || App::new()
             .app_data(Data::new(SiteData { 
-                database: dbpool.clone(),
+                database: db.clone(),
                 seergy_birth_date: args.seergy_birth_date
             }))
             .configure(pages::configure)
+            .configure(api::blog::web::configure)
             .service(styles::style)
-            .service(ResourceFiles::new("/", generate())))
+            .service(ResourceFiles::new("/assets", generate()))
+            .default_service(to(pages::_404)))
         .bind((args.bind_ip, args.port))?
         .run()
         .await
@@ -73,13 +80,16 @@ async fn init_db(db_path: impl AsRef<Path>) -> Result<SqlitePool, sqlx::Error> {
     raw_sql(r#"
         CREATE TABLE IF NOT EXISTS posts (
             id INTEGER PRIMARY KEY,
-            date INTEGER NOT NULL,
+            posted_on INTEGER NOT NULL,
             title TEXT NOT NULL,
             summary TEXT,
             content BLOB NOT NULL
         );
         CREATE TABLE IF NOT EXISTS comments (
-            
+            id INTEGER PRIMARY KEY,
+            posted_on INTEGER NOT NULL,
+            commenter TEXT NOT NULL,
+            content BLOB NOT NULL
         );
     "#)
     .execute(&pool)
