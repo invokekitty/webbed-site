@@ -1,6 +1,6 @@
 @use 'colors.scss';
 @forward 'colors.scss';
-$fonts: (tiny5, waffle, tewi);
+$fonts: (tiny5, waffle, tewi, Myna);
 
 @each $font in $fonts {
     @import url('/assets/fonts/#{$font}/stylesheet.css');

@@ -19,7 +19,7 @@ pub async fn posts() -> impl Responder {
 
 pub fn configure(config: &mut ServiceConfig) {
     config.service(get_post)
-        .service(posts_redirect);
+        .service(web::redirect("/posts", "/posts/"));
 }
 
 #[get("/posts/{id}")]
@@ -40,13 +40,6 @@ pub async fn get_post(id: web::Path<u64>, data: Data<SiteData>) -> impl Responde
             }
         }
     }
-}
-
-#[get("/posts")]
-pub async fn posts_redirect() -> impl Responder {
-    HttpResponse::MovedPermanently()
-        .append_header(("Location", "/posts/"))
-        .body("Moved to /posts/")
 }
 
 struct Post<'a> {

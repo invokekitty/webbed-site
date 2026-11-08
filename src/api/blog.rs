@@ -4,7 +4,9 @@ use std::range::Range;
 use brotli::{BrotliCompress, BrotliDecompress, enc::{BrotliEncoderParams, backward_references::BrotliEncoderMode}};
 use cached::{concurrent_cached, once};
 use chrono::{DateTime, Utc};
+use markdown::CompileOptions;
 use serde::{Deserialize, Serialize};
+use sqlx::QueryBuilder;
 use sqlx::{encode::IsNull, prelude::{FromRow, Type}, query, query_as, sqlite::{SqliteArgumentsBuffer, SqliteQueryResult, SqliteValueRef}, Decode, Encode, Row, Sqlite, SqlitePool};
 use sqlx::query::Query;
 
@@ -28,22 +30,23 @@ pub async fn get_all_posts(db_pool: &SqlitePool) -> Result<Vec<PostData>, sqlx::
 }
 
 pub async fn list_post_ids(db: &SqlitePool, after: Option<DateTime<Utc>>, before: Option<DateTime<Utc>>) -> Result<Vec<u64>, sqlx::Error> {
-    let query: Query<Sqlite, _> = match (before, after) {
-        (Some(after), Some(before)) =>
-            query("SELECT id FROM posts WHERE posted_on > $1 AND posted_on < $2")
-                .bind(after)
-                .bind(before),
-        (Some(after), None) =>
-            query("SELECT id FROM posts WHERE posted_on > $1")
-                .bind(after),
-        (None, Some(before)) =>
-            query("SELECT id FROM posts WHERE posted_on < $1")
-                .bind(before),
-        (None, None) =>
-            query("SELECT id FROM posts")
-    };
+    let mut qb = QueryBuilder::new("SELECT id FROM posts");
+    let mut where_or_and = " WHERE ";
 
-    let r: Vec<u64> = query.fetch_all(db)
+    if let Some(date) = after {
+        qb.push(where_or_and);
+        qb.push("posted_on >");
+        qb.push_bind(date);
+        where_or_and = " AND ";
+    }
+    if let Some(date) = before {
+        qb.push(where_or_and);
+        qb.push("posted_on <");
+        qb.push_bind(date);
+    }
+
+    let r: Vec<u64> = qb.build()
+        .fetch_all(db)
         .await?
         .into_iter()
         .map(|eeg| eeg.get::<i64, _>(0) as u64)
@@ -54,19 +57,33 @@ pub async fn list_post_ids(db: &SqlitePool, after: Option<DateTime<Utc>>, before
 
 pub mod web {
     use std::error::Error;
-    use actix_web::{web, get, HttpRequest, post, Responder};
+    use actix_web::{HttpRequest, Responder, delete, get, post, web};
     use actix_web::web::{Data, Json, ServiceConfig};
+    use actix_web_httpauth::middleware::HttpAuthentication;
     use chrono::{DateTime, Utc};
     use serde::Deserialize;
-    use crate::api::blog::{fetch_post, PostData, list_post_ids};
+    use crate::api::auth;
+use crate::api::blog::{CompressableText, PostData, fetch_post, list_post_ids};
     use crate::SiteData;
 
     pub fn configure(config: &mut ServiceConfig) {
-        config.service(get_post)
-            .service(create_post)
-            .service(list_posts);
-    }
+        let auth = HttpAuthentication::bearer(auth::check_bearer_jwt);
 
+        let scope_public = web::scope("/api-public/posts")
+            .service(list_posts)
+            .service(get_post);
+
+        let scope_private = web::scope("/api/posts")
+            .wrap(auth)
+            .service(list_posts)
+            .service(create_post)
+            .service(get_post)
+            .service(delete_post)
+            .service(update_post);
+
+        config.service(scope_public)
+            .service(scope_private);
+    }
 
     #[derive(Copy, Clone, Deserialize)]
     struct PostsQuery {
@@ -74,7 +91,7 @@ pub mod web {
         before: Option<DateTime<Utc>>
     }
 
-    #[get("/api/posts/list")]
+    #[get("/list")]
     async fn list_posts(
         query: web::Query<PostsQuery>,
         site_data: Data<SiteData>
@@ -82,21 +99,72 @@ pub mod web {
         Ok(Json(list_post_ids(&site_data.database, query.after, query.before).await?))
     }
 
-    #[post("/api/posts/create")]
-    async fn create_post(
-        req: HttpRequest,
-        Json(mut post): Json<PostData>,
-        site_data: Data<SiteData>
-    ) -> Result<impl Responder, Box<dyn Error>> {
-        post.post(&site_data.database).await?;
-        Ok(Json(post))
+    #[derive(Deserialize)]
+    struct CreatePostRequest {
+        title: String,
+        summary: Option<String>,
+        content: String
     }
 
-    #[get("/api/posts/post-{id}")]
+    #[post("/new")]
+    async fn create_post(
+        req: HttpRequest,
+        Json(request): Json<CreatePostRequest>,
+        site_data: Data<SiteData>
+    ) -> Result<impl Responder, Box<dyn Error>> {
+        let mut post = PostData::new(request.title, request.summary, request.content);
+        post.post(&site_data.database).await?;
+        Ok(post.id.unwrap().to_string())
+    }
+
+    #[get("/post-{id}")]
     async fn get_post(id: web::Path<u64>, site_data: Data<SiteData>) -> Result<impl Responder, Box<dyn Error>> {
         Ok(Json(fetch_post(&site_data.database, *id).await?))
     }
 
+    #[delete("/post-{id}")]
+    async fn delete_post(id: web::Path<u64>, site_data: Data<SiteData>) -> Result<impl Responder, Box<dyn Error>> {
+        let mut post = fetch_post(&site_data.database, *id).await?
+            .ok_or("This post doesn't exist")?;
+        post.delete(&site_data.database).await?;
+        Ok("Success")
+    }
+
+    #[derive(Deserialize)]
+    struct UpdatePostRequest {
+        title: Option<String>,
+        summary: Option<String>,
+        content: Option<String>
+    }
+
+    #[post("/post-{id}")]
+    async fn update_post(
+        id: web::Path<u64>, 
+        site_data: Data<SiteData>, 
+        body: Json<UpdatePostRequest>
+    ) -> Result<impl Responder, Box<dyn Error>> {
+        let mut post = fetch_post(&site_data.database, *id).await?
+            .ok_or("This post doesn't exist")?;
+
+        if let Some(content) = &body.content {
+            post.content = CompressableText(PostData::parse_markdown(content));
+            post.update_content(&site_data.database).await?;
+        }
+
+        let mut update_rest = false;
+        if let Some(title) = &body.title {
+            post.title = title.clone();
+            update_rest = true;
+        }
+        if let Some(summary) = &body.summary {
+            post.summary = Some(summary.clone());
+            update_rest = true;
+        }
+
+        if update_rest { post.update_title_and_summary(&site_data.database).await?; }
+
+        Ok("Success")
+    }
 }
 
 
@@ -110,21 +178,26 @@ pub struct PostData {
 }
 
 impl PostData {
-    pub fn new(title: impl Into<String>, desc: Option<String>, content: impl Into<String>) -> Self {
-        PostData { 
-            id: None, 
+    pub fn new(title: impl Into<String>, desc: Option<String>, md: impl AsRef<str>) -> Self {
+        PostData {
+            id: None,
             posted_on: Utc::now(),
             title: title.into(),
             summary: desc,
-            content: CompressableText(content.into())
+            content: CompressableText(Self::parse_markdown(md))
         }
+    }
+
+    pub fn parse_markdown(md: impl AsRef<str>) -> String {
+        let md_options = markdown::Options::gfm();
+        markdown::to_html_with_options(md.as_ref(), &md_options).unwrap()
     }
 
     pub async fn post(&mut self, db_pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
         if let Some(_) = &self.id {
             return Err("The post already has a database id, use modify methods instead".into());
         }
-        
+
         let result = query("INSERT INTO posts (posted_on, title, summary, content) VALUES ($1, $2, $3, $4)")
             .bind(&self.posted_on)
             .bind(&self.title)
@@ -168,12 +241,31 @@ impl PostData {
         }
     }
 
+    pub async fn delete(&mut self, db: &SqlitePool) -> Result<SqliteQueryResult, Box<dyn Error>> {
+        if let Some(id) = self.id {
+            let result = query("DELETE FROM posts WHERE id = $1")
+                .bind(id as i64)
+                .execute(db)
+                .await?;
+            
+            self.id = None;
+            if let Some(posts_cache) = FETCH_POST.get() {
+                posts_cache.remove(&id);
+            }
+            *GET_ALL_POSTS.write().await = None;
+    
+            Ok(result)
+        } else {
+            Err("Not a post in the database".into())
+        }
+    }
+
     async fn invalidate_caches(&self) {
         let id = self.id.expect("Should only be called on posts in the database");
         if let Some(posts_cache) = FETCH_POST.get() {
             posts_cache.set(id, Some(self.clone()));
         }
-    
+
         *GET_ALL_POSTS.write().await = None;
     }
 }
