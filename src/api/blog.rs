@@ -53,6 +53,7 @@ pub async fn list_post_ids(db: &SqlitePool, after: Option<DateTime<Utc>>, before
 
 pub mod web {
     use std::error::Error;
+    use actix_web::error::{ErrorBadRequest, ErrorInternalServerError, ErrorNotFound};
     use actix_web::{Responder, delete, get, post, web};
     use actix_web::web::{Data, Json, ServiceConfig};
     use actix_web_httpauth::middleware::HttpAuthentication;
@@ -91,8 +92,8 @@ pub mod web {
     async fn list_posts(
         query: web::Query<PostsQuery>,
         site_data: Data<SiteData>
-    ) -> Result<impl Responder, Box<dyn Error>> {
-        Ok(Json(list_post_ids(&site_data.database, query.after, query.before).await?))
+    ) -> Result<impl Responder, actix_web::Error> {
+        Ok(Json(list_post_ids(&site_data.database, query.after, query.before).await.map_err(ErrorInternalServerError)?))
     }
 
     #[derive(Deserialize)]
@@ -104,23 +105,24 @@ pub mod web {
 
     #[post("/new")]
     async fn create_post(
-        Json(request): Json<CreatePostRequest>,
-        site_data: Data<SiteData>
-    ) -> Result<impl Responder, Box<dyn Error>> {
-        let mut post = PostData::new(request.title, request.summary, request.content);
+        site_data: Data<SiteData>,
+        Json(body): Json<CreatePostRequest>
+    ) -> Result<impl Responder, actix_web::Error> {
+        let mut post = PostData::new(body.title, body.summary, body.content);
         post.post(&site_data.database).await?;
         Ok(post.id.unwrap().to_string())
     }
 
     #[get("/post-{id}")]
-    async fn get_post(id: web::Path<u64>, site_data: Data<SiteData>) -> Result<impl Responder, Box<dyn Error>> {
-        Ok(Json(fetch_post(&site_data.database, *id).await?))
+    async fn get_post(id: web::Path<u64>, site_data: Data<SiteData>) -> Result<impl Responder, actix_web::Error> {
+        Ok(Json(fetch_post(&site_data.database, *id).await.map_err(ErrorInternalServerError)?))
     }
 
     #[delete("/post-{id}")]
-    async fn delete_post(id: web::Path<u64>, site_data: Data<SiteData>) -> Result<impl Responder, Box<dyn Error>> {
-        let mut post = fetch_post(&site_data.database, *id).await?
-            .ok_or("This post doesn't exist")?;
+    async fn delete_post(id: web::Path<u64>, site_data: Data<SiteData>) -> Result<impl Responder, actix_web::Error> {
+        let mut post = fetch_post(&site_data.database, *id).await
+            .map_err(ErrorInternalServerError)?
+            .ok_or(ErrorNotFound("This post doesn't exist"))?;
         post.delete(&site_data.database).await?;
         Ok("Success")
     }
@@ -134,19 +136,20 @@ pub mod web {
 
     #[post("/post-{id}")]
     async fn update_post(
-        id: web::Path<u64>, 
-        site_data: Data<SiteData>, 
-        body: Json<UpdatePostRequest>
-    ) -> Result<impl Responder, Box<dyn Error>> {
-        let mut post = fetch_post(&site_data.database, *id).await?
-            .ok_or("This post doesn't exist")?;
+        id: web::Path<u64>,
+        site_data: Data<SiteData>,
+        Json(body): Json<UpdatePostRequest>
+    ) -> Result<impl Responder, actix_web::Error> {
+        let mut post = fetch_post(&site_data.database, *id).await
+            .map_err(ErrorInternalServerError)?
+            .ok_or(ErrorNotFound("This post doesn't exist"))?;
 
+        let (mut update_content, mut update_rest) = (false, false);
         if let Some(content) = &body.content {
             post.content = CompressableText(PostData::parse_markdown(content));
-            post.update_content(&site_data.database).await?;
+            update_content = true;
         }
 
-        let mut update_rest = false;
         if let Some(title) = &body.title {
             post.title = title.clone();
             update_rest = true;
@@ -156,7 +159,13 @@ pub mod web {
             update_rest = true;
         }
 
-        if update_rest { post.update_title_and_summary(&site_data.database).await?; }
+        let db = &site_data.database;
+        match (update_content, update_rest) {
+            (true, true) => {tokio::try_join!(post.update_content(db), post.update_title_and_summary(db))?;},
+            (true, _) => {post.update_content(db).await?;},
+            (_, true) => {post.update_title_and_summary(db).await?;},
+            _ => return Err(ErrorBadRequest("Not changing anything").into())
+        }
 
         Ok("Success")
     }
@@ -236,19 +245,33 @@ impl PostData {
         }
     }
 
+    pub async fn delete_all_comments(&mut self, db: &SqlitePool) -> Result<SqliteQueryResult, Box<dyn Error>> {
+        if let Some(id) = self.id {
+            let result = query("DELETE FROM comments WHERE post = $1")
+                .bind(id as i64)
+                .execute(db)
+                .await?;
+
+            Ok(result)
+        } else {
+            Err("Not a post in the database".into())
+        }
+    }
+
     pub async fn delete(&mut self, db: &SqlitePool) -> Result<SqliteQueryResult, Box<dyn Error>> {
         if let Some(id) = self.id {
+            let _ = self.delete_all_comments(db).await?;
             let result = query("DELETE FROM posts WHERE id = $1")
                 .bind(id as i64)
                 .execute(db)
                 .await?;
-            
+
             self.id = None;
             if let Some(posts_cache) = FETCH_POST.get() {
                 posts_cache.remove(&id);
             }
             *GET_ALL_POSTS.write().await = None;
-    
+
             Ok(result)
         } else {
             Err("Not a post in the database".into())

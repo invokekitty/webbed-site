@@ -2267,6 +2267,7 @@ dependencies = [
  "serde_json",
  "sqlx",
  "static-files 0.3.1",
+ "tokio",
 ]
 
 [[package]]

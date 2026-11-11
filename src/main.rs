@@ -45,7 +45,9 @@ struct Arguments {
     seergy_birth_date: DateTime<Utc>,
     /// Generate a jwt token and exit
     #[arg(long)]
-    generate_token_for: Option<String>
+    generate_token: Option<String>,
+    #[arg(long)]
+    reject_token: Option<String>
 }
 
 pub struct SiteData {
@@ -59,15 +61,17 @@ async fn main() -> Result<(), Box<dyn Error>>{
     let mut args = Arguments::parse();
     args.data_dir.push_trailing_sep();
     let (encode_key, decode_key) = init_jwt_keypair(args.data_dir.with_file_name("skeegs.key"))?;
-
-    if let Some(sub) = args.generate_token_for {
-        api::auth::generate_token(sub, encode_key)?;
-    }
-    
     let db = init_db(args.data_dir.with_file_name("skeegs.db")).await?;
 
+    if let Some(sub) = args.generate_token {
+        api::auth::generate_token(&db, sub, encode_key).await?;
+    } else if let Some(sub) = args.reject_token {
+        api::auth::reject_token(&db, sub).await?;
+    }
+
+
     HttpServer::new(move || App::new()
-            .app_data(Data::new(SiteData { 
+            .app_data(Data::new(SiteData {
                 database: db.clone(),
                 seergy_birth_date: args.seergy_birth_date,
                 decoding_key: decode_key.clone()
@@ -90,7 +94,7 @@ fn init_jwt_keypair(key_file: impl AsRef<Path>) -> Result<(EncodingKey, Decoding
         let pair = Ed25519KeyPair::from_pkcs8(&pkcs8)?;
 
         return Ok((
-            EncodingKey::from_ed_der(&pkcs8), 
+            EncodingKey::from_ed_der(&pkcs8),
             DecodingKey::from_ed_der(&pair.public_key().as_ref())
         ));
     }
@@ -106,11 +110,11 @@ fn init_jwt_keypair(key_file: impl AsRef<Path>) -> Result<(EncodingKey, Decoding
         file.set_permissions(perms)?;
     }
     file.write_all(pkcs8.as_ref())?;
-    
+
     let pair = Ed25519KeyPair::from_pkcs8(pkcs8.as_ref())?;
 
     Ok((
-        EncodingKey::from_ed_der(pkcs8.as_ref()), 
+        EncodingKey::from_ed_der(pkcs8.as_ref()),
         DecodingKey::from_ed_der(&pair.public_key().as_ref())
     ))
 }
@@ -122,7 +126,7 @@ async fn init_db(db_path: impl AsRef<Path>) -> Result<SqlitePool, sqlx::Error> {
                 .filename(db_path)
                 .create_if_missing(true)
                 .foreign_keys(true))
-        .await?;    
+        .await?;
 
     raw_sql(r#"
         CREATE TABLE IF NOT EXISTS posts (
@@ -134,9 +138,16 @@ async fn init_db(db_path: impl AsRef<Path>) -> Result<SqlitePool, sqlx::Error> {
         );
         CREATE TABLE IF NOT EXISTS comments (
             id INTEGER PRIMARY KEY,
+            post INTEGER NOT NULL,
             posted_on INTEGER NOT NULL,
             commenter TEXT NOT NULL,
-            content BLOB NOT NULL
+            content BLOB NOT NULL,
+            FOREIGN KEY(post) REFERENCES posts(id)
+        );
+        CREATE TABLE IF NOT EXISTS seergs (
+            name TEXT PRIMARY KEY,
+            created INTEGER NOT NULL,
+            last_use INTEGER
         );
     "#)
     .execute(&pool)
@@ -144,4 +155,3 @@ async fn init_db(db_path: impl AsRef<Path>) -> Result<SqlitePool, sqlx::Error> {
 
     Ok(pool)
 }
-
