@@ -1,4 +1,4 @@
-#![feature(decl_macro, default_field_values)]
+#![feature(decl_macro, default_field_values, duration_constructors, duration_constants)]
 #![feature(path_trailing_sep)]
 #![feature(range_into_bounds)]
 

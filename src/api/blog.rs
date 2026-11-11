@@ -1,14 +1,10 @@
 use std::{error::Error, hash::Hash, io};
-use std::ops::{Bound, IntoBounds, RangeFrom, RangeTo};
-use std::range::Range;
 use brotli::{BrotliCompress, BrotliDecompress, enc::{BrotliEncoderParams, backward_references::BrotliEncoderMode}};
 use cached::{concurrent_cached, once};
 use chrono::{DateTime, Utc};
-use markdown::CompileOptions;
 use serde::{Deserialize, Serialize};
 use sqlx::QueryBuilder;
 use sqlx::{encode::IsNull, prelude::{FromRow, Type}, query, query_as, sqlite::{SqliteArgumentsBuffer, SqliteQueryResult, SqliteValueRef}, Decode, Encode, Row, Sqlite, SqlitePool};
-use sqlx::query::Query;
 
 #[concurrent_cached(
     key = "u64",
@@ -57,13 +53,13 @@ pub async fn list_post_ids(db: &SqlitePool, after: Option<DateTime<Utc>>, before
 
 pub mod web {
     use std::error::Error;
-    use actix_web::{HttpRequest, Responder, delete, get, post, web};
+    use actix_web::{Responder, delete, get, post, web};
     use actix_web::web::{Data, Json, ServiceConfig};
     use actix_web_httpauth::middleware::HttpAuthentication;
     use chrono::{DateTime, Utc};
     use serde::Deserialize;
     use crate::api::auth;
-use crate::api::blog::{CompressableText, PostData, fetch_post, list_post_ids};
+    use crate::api::blog::{CompressableText, PostData, fetch_post, list_post_ids};
     use crate::SiteData;
 
     pub fn configure(config: &mut ServiceConfig) {
@@ -108,7 +104,6 @@ use crate::api::blog::{CompressableText, PostData, fetch_post, list_post_ids};
 
     #[post("/new")]
     async fn create_post(
-        req: HttpRequest,
         Json(request): Json<CreatePostRequest>,
         site_data: Data<SiteData>
     ) -> Result<impl Responder, Box<dyn Error>> {
@@ -228,7 +223,7 @@ impl PostData {
 
     pub async fn update_title_and_summary(&self, db: &SqlitePool) -> Result<SqliteQueryResult, Box<dyn Error>> {
         if let Some(id) = self.id {
-            let result = query("UPDATE posts SET title = $1, desc = $2 WHERE id = $3")
+            let result = query("UPDATE posts SET title = $1, summary = $2 WHERE id = $3")
                 .bind(&self.title)
                 .bind(&self.summary)
                 .bind(id as i64)

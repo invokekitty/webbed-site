@@ -18,6 +18,9 @@ pub const PAGES: &'static [PageInfo] = &[
 pub fn configure(config: &mut ServiceConfig) {
     for page in PAGES {
         config.route(page.route, (page.builder)(get()));
+        if let Some(eegs) = page.additional {
+            eegs(config)
+        }
     }
 }
 
@@ -30,7 +33,7 @@ pub struct PageInfo {
 
 pub async fn _404() -> Markup {
     html! {
-        Page title="404 Error" route="" custom-container-class="container404" {
+        Page title="404 Error" route="" custom-container-class="container404" .. {
             .box404 {
                 h1.text404 { "404!" }
                 h3 { "somrawne got lost :3" }

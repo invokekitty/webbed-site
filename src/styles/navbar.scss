@@ -3,6 +3,7 @@
 .navbar {
     padding: 0;
     font-size: large;
+    view-transition-name: navbar;
     @include common.flex($justify: center, $align: center);
     @include common.tiny5;
 }

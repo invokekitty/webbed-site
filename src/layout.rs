@@ -1,4 +1,5 @@
-use maud::{ComponentBody, DOCTYPE, PreEscaped, Render, write_html};
+use maud::components::{Body, Component, NoBody};
+use maud::{DOCTYPE, PreEscaped, write_html};
 
 use crate::pages::PageInfo;
 use crate::{components::Icon, pages::PAGES};
@@ -6,13 +7,13 @@ use crate::{components::Icon, pages::PAGES};
 pub struct Page<'a> {
     pub title: &'a str,
     pub route: &'a str,
-    pub body: ComponentBody<'a>,
     pub custom_container_class: Option<&'a str> = None,
     pub pages: &'a [PageInfo] = PAGES
 }
 
-impl Render for Page<'_> {
-    fn render_to(&self, buffer: &mut String) {
+impl<'a> Component for Page<'a> {
+    type Body = Body<'a>;
+    fn render_to(self, body: Body<'a>, buffer: &mut String) {
         write_html! { buffer =>
             (DOCTYPE)
             html lang="en" {
@@ -29,7 +30,7 @@ impl Render for Page<'_> {
                     Navbar pages=(self.pages) route=(self.route);
                     main.content {
                         div class=(if let Some(c) = self.custom_container_class { c } else { "container" }) {
-                            (self.body)
+                            (body)
                         }
                     }
                     footer.footer {
@@ -53,8 +54,9 @@ impl Render for Page<'_> {
 }
 
 pub struct Background;
-impl Render for Background {
-    fn render_to(&self, buffer: &mut String) {
+impl Component for Background {
+    type Body = NoBody;
+    fn render_to(self, _body: NoBody, buffer: &mut String) {
         write_html! { buffer =>
             img.bg-img src="/assets/images/bg.webp" alt="background" aria-hidden="true";
         }
@@ -66,8 +68,9 @@ pub struct Navbar<'a> {
     pub route: &'a str
 }
 
-impl Render for Navbar<'_> {
-    fn render_to(&self, buffer: &mut String) {
+impl Component for Navbar<'_> {
+    type Body = NoBody;
+    fn render_to(self, _body: NoBody, buffer: &mut String) {
         write_html! { buffer =>
             .navbar {
                 input #nav-check type="checkbox";

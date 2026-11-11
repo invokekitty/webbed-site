@@ -1,6 +1,7 @@
 use std::fmt::Write;
 
-use maud::{ComponentBody, PreEscaped, Render, write_html};
+use actix_web::body;
+use maud::{PreEscaped, Render, components::{Body, Component}, write_html};
 
 pub const NBSP: PreEscaped<&str> = PreEscaped("&nbsp;");
 
@@ -76,6 +77,8 @@ impl Render for RawIcon {
     }
 }
 
+const EMPTY_SLICE: &[(&str, &str)] = &[];
+
 pub struct IconLi<'a> {
     pub icon: Icon,
     pub tooltip: Option<&'a str> = None,
@@ -83,15 +86,16 @@ pub struct IconLi<'a> {
     pub bg: Option<&'a str> = None,
     pub fg_force: Option<&'a str> = None,
     pub fancy: bool = false,
-    pub body: ComponentBody<'a>
+    pub attrs: &'a [(&'a str, &'a str)] = EMPTY_SLICE
 }
 
-impl Render for IconLi<'_> {
-    fn render_to(&self, buffer: &mut String) {
+impl<'a> Component for IconLi<'a> {
+    type Body = Body<'a>;
+    fn render_to(self, body: Body<'a>, buffer: &mut String) {
         write_html! { buffer =>
-            li .fancy[self.fancy] data-fg=[self.fg] data-fg-force=[self.fg_force] data-bg=[self.bg] data-tooltip=[self.tooltip] {
+            li .fancy[self.fancy] data-fg=[self.fg] data-fg-force=[self.fg_force] data-bg=[self.bg] data-tooltip=[self.tooltip] ..(self.attrs) {
                 (self.icon)
-                span { (self.body) }
+                span { (body) }
             }
         }
     }
@@ -120,12 +124,12 @@ pub struct Grid<'a> {
     pub scope: &'a str,
     pub layout: GridLayout<'a>,
     pub auto_rows: bool = false,
-    pub aut_cols: bool = false,
-    pub body: ComponentBody<'a>
+    pub aut_cols: bool = false
 }
 
-impl Render for Grid<'_> {
-    fn render_to(&self, buffer: &mut String) {
+impl<'a> Component for Grid<'a> {
+    type Body = Body<'a>;
+    fn render_to(self, body: Body<'a>, buffer: &mut String) {
         let GridLayout { root, sized } = self.layout;
         write_html! { buffer =>
             style {
@@ -135,7 +139,7 @@ impl Render for Grid<'_> {
                 }
             }
             div.grid .auto-rows[self.auto_rows] .auto-cols[self.aut_cols] data-scope=(self.scope) {
-                (self.body)
+                (body)
             }
         }
     }
@@ -144,16 +148,16 @@ impl Render for Grid<'_> {
 pub struct Area<'a> {
     pub id: Option<&'a str> = None,
     pub class: Option<&'a str> = None,
-    pub label: &'a str,
-    pub body: ComponentBody<'a>
+    pub label: &'a str
 }
 
-impl Render for Area<'_> {
-    fn render_to(&self, buffer: &mut String) {
+impl<'a> Component for Area<'a> {
+    type Body = Body<'a>;
+    fn render_to(self, body: Body<'a>, buffer: &mut String) {
         let area = "grid-area: ".to_owned() + self.label;
         write_html! { buffer =>
             div id=[self.id] class=[self.class] style=(area) {
-                (self.body)
+                (body)
             }
         }
     }

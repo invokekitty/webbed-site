@@ -1,9 +1,8 @@
-use std::{error::Error, process::exit};
+use std::{error::Error, process::exit, time::Duration};
 
 use actix_web::{dev::ServiceRequest, web::Data};
 use actix_web_httpauth::extractors::bearer::BearerAuth;
-use chrono::{DateTime, Utc};
-use jsonwebtoken::{Algorithm, EncodingKey, Header, TokenData, Validation, crypto::JwtVerifier};
+use jsonwebtoken::{Algorithm, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 
 use crate::SiteData;
@@ -21,7 +20,7 @@ pub async fn check_bearer_jwt(
     req: ServiceRequest, 
     token: BearerAuth
 ) -> Result<ServiceRequest, (actix_web::error::Error, ServiceRequest)> {
-    let data = req.app_data::<SiteData>().unwrap();
+    let data = req.app_data::<Data<SiteData>>().unwrap();
     match jsonwebtoken::decode::<Claims>(
         token.token(), 
         &data.decoding_key, 
@@ -30,17 +29,21 @@ pub async fn check_bearer_jwt(
             ..Validation::new(ALGORITHM)
         }
     ) {
-        Ok(TokenData { header, claims }) => {
-            
+        Ok(eeg) => {
+            eprintln!("{} is in !!!", &eeg.claims.sub);
+            Ok(req)
         },
-        Err(rejection) => {}
+        Err(rejection) => {
+            eprintln!("Someone tried to use an invalid token: '{}'", token.token());
+            Err((actix_web::error::ErrorUnauthorized(rejection), req))
+        } 
     }
-    Ok(req)
 }
 
 
 pub fn generate_token(sub: String, encoding_key: EncodingKey) -> Result<!, Box<dyn Error>> {
-    let claim = Claims { sub, iat: Utc::now() };
+    let iat = jsonwebtoken::get_current_timestamp();
+    let claim = Claims { sub, iat, exp: iat + Duration::from_days(360).as_secs() };
     let token = jsonwebtoken::encode(
         &Header::new(ALGORITHM), 
         &claim, 

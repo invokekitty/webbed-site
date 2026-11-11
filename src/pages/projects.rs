@@ -1,8 +1,7 @@
-use actix_web::get;
 use cached::once;
-use maud::ComponentBody;
 use maud::Markup;
-use maud::Render;
+use maud::components::Component;
+use maud::components::MaybeBody;
 use maud::html;
 use maud::write_html;
 
@@ -13,26 +12,26 @@ use crate::layout::Page;
 #[once]
 pub async fn projects() -> Markup {
     html! {
-        Page title="invoking the projects" route="/projects" {
+        Page title="invoking the projects" route="/projects" .. {
             h1 { "Projects i made" }
             hr.thicc;
-            Project #kritter links=(&[(Codeberg, "sery/kritter")][..]) {
+            Project #kritter links=(&[(Codeberg, "sery/kritter")][..]) .. {
                 h2 { "kritter" }
                 p { "Minecraft multiplatform library with a declarative style and a more kotlin take on things. Soon to be merged with maya's cynosure" }
             }
-            Project #nullbus links=(&[(Codeberg, "sery/nullbus")][..]) {
+            Project #nullbus links=(&[(Codeberg, "sery/nullbus")][..]) .. {
                 h2 { "nullbus" }
                 p { "Event bus born out of delusions and insanity with equally delusional and insane benchmarks" }
             }
-            Project #nullevt links=(&[(Codeberg, "sery/nullevt")][..]) {
+            Project #nullevt links=(&[(Codeberg, "sery/nullevt")][..]) .. {
                 h2 { "nullevt" }
                 p { "Event system with a different architecture that is even faster than nullbus (and thread safe by default !!)" }
             }
-            Project #serycade links=(&[(Codeberg, "sery/serycade"), (AUR, "serycade")][..]) {
+            Project #serycade links=(&[(Codeberg, "sery/serycade"), (AUR, "serycade")][..]) .. {
                 h2 { "serycade" }
                 p { "Silly tui games i made in kotlin/native bcs riley is cute and am gradually rustifying" }
             }
-            Project #ktindy links=(&[(Codeberg, "sery/ktindy")][..]) {
+            Project #ktindy links=(&[(Codeberg, "sery/ktindy")][..]) .. {
                 h2 { "KtIndy" }
                 p {
                     "A kotlin compiler plugin + runtime that makes kotlin use invokedynamic in more places where it makes sense. "
@@ -40,7 +39,7 @@ pub async fn projects() -> Markup {
                 }
                 p { "Featuring a bit of evil jvm fuckery" }
             }
-            Project #website links=(&[(Codeberg, "sery/webbed-site"), (Site, "https://kitty.kisse.su")][..]) {
+            Project #website links=(&[(Codeberg, "sery/webbed-site"), (Site, "https://kitty.kisse.su")][..]) .. {
                 h2 { "this website :3" }
                 p {
                     "Yea this fkin website thats about it, catburger convinced me to switch to astro and helped me abit, and now i rewrote it in rust, "
@@ -53,11 +52,11 @@ pub async fn projects() -> Markup {
             }
             h1 { "Projects i contribute to" }
             hr.thicc;
-            Project #estrogen links=(&[(Github, "MayaqqDev/Estrogen"), (Modrinth, "estrogen"), (CurseForge, "estrogen")][..]) {
+            Project #estrogen links=(&[(Github, "MayaqqDev/Estrogen"), (Modrinth, "estrogen"), (CurseForge, "estrogen")][..]) .. {
                 h2 { "estrogen mod" }
                 p { "A mod about estrogen i think" }
             }
-            Project #cynosure links=(&[(Github, "MayaqqDev/Cynosure"), (Modrinth, "cynosure"), (CurseForge, "cynosure")][..]) {
+            Project #cynosure links=(&[(Github, "MayaqqDev/Cynosure"), (Modrinth, "cynosure"), (CurseForge, "cynosure")][..]) .. {
                 h2 { "cynosure" }
                 p { "cool big modding library thats gonna be merged with kritter" }
             }
@@ -68,18 +67,18 @@ pub async fn projects() -> Markup {
 struct Project<'a> {
     id: &'a str,
     links: &'a [(Platform, &'a str)],
-    deprecated: bool = false,
-    body: Option<ComponentBody<'a>> = None
+    deprecated: bool = false
 }
 
-impl Render for Project<'_> {
-    fn render_to(&self, buffer: &mut String) {
+impl<'a> Component for Project<'a> {
+    type Body = MaybeBody<'a>;
+    fn render_to(self, body: MaybeBody<'a>, buffer: &mut String) {
         write_html! { buffer =>
             #(self.id) .project {
                 @if self.deprecated {
-                    span.deprecated-marker { Icon::Warning; (NBSP)"Deprecated" }
+                    span.deprecated-marker { (Icon::Warning) (NBSP)"Deprecated" }
                 }
-                @if let Some(ref body) = self.body {
+                @if let Some(ref body) = body {
                     (body)
                 }
                 span.fancy {

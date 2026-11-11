@@ -18,7 +18,7 @@ clap = { version = "4.6.7", features = ["derive"] }
 grass = { version = "0.13.4", default-features = false, features = [ "macro" ]}
 iana-time-zone = "0.1.65"
 markdown = "1.0.0"
-maud = { git = "https://github.com/invokekitty/maudx", features = [ "actix-web", "default-fields" ] }
+maud = { git = "https://github.com/invokekitty/maudx", features = [ "actix-web", "json", "components", "default-fields" ] }
 rustls = "0.23.45"
 static-files = "0.3.1"
 sqlx = { version = "0.9.0", features = [ "sqlite", "runtime-tokio", "chrono" ]}
