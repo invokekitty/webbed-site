@@ -54,7 +54,7 @@ pub async fn list_post_ids(db: &SqlitePool, after: Option<DateTime<Utc>>, before
 pub mod web {
     use std::error::Error;
     use actix_web::error::{ErrorBadRequest, ErrorInternalServerError, ErrorNotFound};
-    use actix_web::{Responder, delete, get, post, web};
+    use actix_web::{FromRequest, Responder, delete, get, post, put, web};
     use actix_web::web::{Data, Json, ServiceConfig};
     use actix_web_httpauth::middleware::HttpAuthentication;
     use chrono::{DateTime, Utc};
@@ -64,22 +64,12 @@ pub mod web {
     use crate::SiteData;
 
     pub fn configure(config: &mut ServiceConfig) {
-        let auth = HttpAuthentication::bearer(auth::check_bearer_jwt);
-
-        let scope_public = web::scope("/api-public/posts")
-            .service(list_posts)
-            .service(get_post);
-
-        let scope_private = web::scope("/api/posts")
-            .wrap(auth)
+        config.service(web::scope("/api/posts")
             .service(list_posts)
             .service(create_post)
             .service(get_post)
             .service(delete_post)
-            .service(update_post);
-
-        config.service(scope_public)
-            .service(scope_private);
+            .service(update_post));
     }
 
     #[derive(Copy, Clone, Deserialize)]
@@ -93,7 +83,10 @@ pub mod web {
         query: web::Query<PostsQuery>,
         site_data: Data<SiteData>
     ) -> Result<impl Responder, actix_web::Error> {
-        Ok(Json(list_post_ids(&site_data.database, query.after, query.before).await.map_err(ErrorInternalServerError)?))
+        let posts = list_post_ids(&site_data.database, query.after, query.before)
+            .await
+            .map_err(ErrorInternalServerError)?;
+        Ok(Json(posts))
     }
 
     #[derive(Deserialize)]
@@ -103,22 +96,25 @@ pub mod web {
         content: String
     }
 
-    #[post("/new")]
+    #[post("/new", wrap = "HttpAuthentication::bearer(auth::check_bearer_jwt)")]
     async fn create_post(
         site_data: Data<SiteData>,
         Json(body): Json<CreatePostRequest>
     ) -> Result<impl Responder, actix_web::Error> {
         let mut post = PostData::new(body.title, body.summary, body.content);
         post.post(&site_data.database).await?;
-        Ok(post.id.unwrap().to_string())
+        Ok(Json(post))
     }
 
     #[get("/post-{id}")]
     async fn get_post(id: web::Path<u64>, site_data: Data<SiteData>) -> Result<impl Responder, actix_web::Error> {
-        Ok(Json(fetch_post(&site_data.database, *id).await.map_err(ErrorInternalServerError)?))
+        let post = fetch_post(&site_data.database, *id)
+            .await
+            .map_err(ErrorInternalServerError)?;
+        Ok(Json(post))
     }
 
-    #[delete("/post-{id}")]
+    #[delete("/post-{id}", wrap = "HttpAuthentication::bearer(auth::check_bearer_jwt)")]
     async fn delete_post(id: web::Path<u64>, site_data: Data<SiteData>) -> Result<impl Responder, actix_web::Error> {
         let mut post = fetch_post(&site_data.database, *id).await
             .map_err(ErrorInternalServerError)?
@@ -134,7 +130,7 @@ pub mod web {
         content: Option<String>
     }
 
-    #[post("/post-{id}")]
+    #[put("/post-{id}", wrap = "HttpAuthentication::bearer(auth::check_bearer_jwt)")]
     async fn update_post(
         id: web::Path<u64>,
         site_data: Data<SiteData>,
@@ -161,9 +157,9 @@ pub mod web {
 
         let db = &site_data.database;
         match (update_content, update_rest) {
-            (true, true) => {tokio::try_join!(post.update_content(db), post.update_title_and_summary(db))?;},
-            (true, _) => {post.update_content(db).await?;},
-            (_, true) => {post.update_title_and_summary(db).await?;},
+            (true, true) => { tokio::try_join!(post.update_content(db), post.update_title_and_summary(db))?; },
+            (true, _) => { post.update_content(db).await?; },
+            (_, true) => { post.update_title_and_summary(db).await?; },
             _ => return Err(ErrorBadRequest("Not changing anything").into())
         }
 

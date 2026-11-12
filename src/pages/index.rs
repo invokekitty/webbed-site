@@ -55,7 +55,7 @@ pub async fn index() -> Markup {
                     }
                 }
                 Area label="main" .. {
-                    //.box {
+                    .box {
                         h2 { "sery"(NBSP)(NBSP)"•"(NBSP)(NBSP)"they/she" }
                         p {
                             r#"Haii im sery, dumbass cat that codes and enjoys music alot.
@@ -70,7 +70,7 @@ pub async fn index() -> Markup {
                             r#"Uhmmm, i use linux btw :3. Currently using "# a href="https://chimera-linux.org" { "Chimera Linux" } r#"
                                and "# a href="https://cachyos.org" { "CachyOS" }
                         }
-                    //}
+                    }
                 }
                 Area label="frens" .. {
                     Friendlink href="#" tooltip="Add me to your site :3" img="/assets/banners/me.webp" alt="Me";

@@ -21,7 +21,7 @@ struct Claims {
 pub async fn check_bearer_jwt(
     req: ServiceRequest,
     token: BearerAuth
-) -> Result<ServiceRequest, (actix_web::error::Error, ServiceRequest)> {
+) -> Result<ServiceRequest, (actix_web::Error, ServiceRequest)> {
     let data = req.app_data::<Data<SiteData>>().unwrap();
     match jsonwebtoken::decode::<Claims>(
         token.token(),
@@ -41,7 +41,7 @@ pub async fn check_bearer_jwt(
         }
         Err(rejection) => {
             eprintln!("Someone tried to use an invalid token: '{}': {rejection}", token.token());
-            Err((actix_web::error::ErrorUnauthorized("Unauthorized"), req))
+            Err((ErrorUnauthorized("Unauthorized"), req))
         }
     }
 }
@@ -60,8 +60,9 @@ async fn enter_seerg(db: &SqlitePool, seerg: &str, iat: u64) -> Result<bool, sql
             Some(date) => eprintln!("New access by '{seerg}' on {now}. Last access on {date}"),
             None => eprintln!("First access by '{seerg}' on {now}")
         }
-        query("UPDATE seergs SET last_use = $1")
+        query("UPDATE seergs SET last_use = $1 WHERE name = $2")
             .bind(now)
+            .bind(seerg)
             .execute(db)
             .await?;
     }
@@ -70,20 +71,20 @@ async fn enter_seerg(db: &SqlitePool, seerg: &str, iat: u64) -> Result<bool, sql
 }
 
 pub async fn generate_token(db: &SqlitePool, sub: String, encoding_key: EncodingKey) -> Result<!, Box<dyn Error>> {
-    
+
     let iat = jsonwebtoken::get_current_timestamp();
-    let claim = Claims { sub: sub.clone(), iat, exp: iat + Duration::from_days(360).as_secs() };
+    let add_seerg_query = query("INSERT INTO seergs (name, created) VALUES ($1, $2)")
+        .bind(&sub)
+        .bind(iat as i64);
+    
+    let claim = Claims { sub, iat, exp: iat + Duration::from_days(360).as_secs() };
     let token = jsonwebtoken::encode(
         &Header::new(ALGORITHM),
         &claim,
         &encoding_key
     )?;
 
-    query("INSERT INTO seergs (name, created) VALUES ($1, $2)")
-        .bind(&sub)
-        .bind(iat as i64)
-        .execute(db)
-        .await?;
+    add_seerg_query.execute(db).await?;
     
     println!("{token}");
     exit(0)

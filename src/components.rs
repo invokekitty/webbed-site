@@ -52,10 +52,6 @@ impl Icon {
 }
 
 impl Render for Icon {
-    // fn render(&self) -> maud::Markup {
-    //     let chr = char::from_u32(*self as u32).expect("I fuckied upied");
-    //     html! { span.icon { (chr) } }
-    // } is what i would do, if i wasnt an insane performance freak
     fn render_to(&self, buffer: &mut String) {
         write_html! { buffer =>
             span.icon { (self.to_raw()) }
@@ -106,7 +102,7 @@ impl<'a> Component for IconLi<'a> {
 // }}
 // 
 pub macro grid {
-    {_ => [$($($item:ident)+),+];$($size:literal => [$($($sized_item:ident)+),+]);*} => {
+    {_=>[$($($item:ident)+),+];$($size:literal=>[$($($sized_item:ident)+),+]);*} => {
         crate::components::GridLayout::new(
             crate::components::GridDefinition(None, &[$(concat!($(stringify!($item), " "),+)),+]),
             &[$(crate::components::GridDefinition(Some($size), &[$(concat!($(stringify!($sized_item), " "),+)),+])),*]
@@ -207,29 +203,3 @@ impl Render for ScopedDefinition<'_> {
         }
     }
 }
-//
-//
-// pub macro grid($($auto:ident;)?[$($row:literal),*];$($(@$px:literal[$($row_px:literal),*]);*;)?$($area:ident:{$($content:tt)*})*) {{
-//     const SCOPE: &str = concat!(module_path!(), "-", line!(), "-", column!());
-//     let _auto: bool = false $(|| stringify!($auto) == "auto")?;
-//     let _auto_rows: bool = _auto $(|| stringify!($auto) == "autorows")?;
-//     let _auto_cols: bool = _auto $(|| stringify!($auto) == "autocols")?;
-//     let __rootdefinition = GridDefinition(None, &[$($row,)*], SCOPE);
-//     let __sizeddefinitions: &[GridDefinition<'_>] = &[];
-//     $(let __sizeddefinitions: &[GridDefinition<'_>] =
-//         &[$(GridDefinition(Some($px),&[$($row_px,)*], SCOPE)),*];)?
-//
-//     maud::html! {
-//         style {
-//             (__rootdefinition)
-//             @for _sd in __sizeddefinitions {
-//                 (_sd)
-//             }
-//         }
-//         .grid.auto-columns[_auto_cols].auto-rows[_auto_rows] data-scope=(SCOPE) {
-//             $(div data-scope=(SCOPE) style=(concat!("grid-area:", stringify!($area), ";")) {
-//                 $($content)*
-//             })*
-//         }
-//     }
-// }}
