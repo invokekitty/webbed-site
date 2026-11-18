@@ -1,4 +1,4 @@
-use actix_web::{HttpResponse, Responder, get, web::{self, Data}};
+use actix_web::{HttpResponse, Responder, error::ErrorInternalServerError, get, http::header::{CacheControl, CacheDirective::MaxAge}, web::{self, Data}};
 use actix_web::web::ServiceConfig;
 use cached::concurrent_cached;
 use maud::{Markup, PreEscaped, Render, components::{Component, NoBody}, html, write_html};
@@ -6,15 +6,20 @@ use maud::{Markup, PreEscaped, Render, components::{Component, NoBody}, html, wr
 use crate::{SiteData, api::blog::PostData, layout::Page};
 use crate::api::blog;
 
-pub async fn posts() -> impl Responder {
+pub async fn posts(data: Data<SiteData>) -> Result<impl Responder, actix_web::Error> {
+    let posts = blog::get_all_posts(&data.database)
+        .await
+        .map_err(ErrorInternalServerError)?;
+    
     let markup = html! {
         Page title="posts" route="/posts/" .. {
-
+            
         }
     };
 
-    HttpResponse::Ok()
-        .body(markup)
+    Ok(HttpResponse::Ok()
+        .append_header(CacheControl(vec![MaxAge(300)]))
+        .body(markup))
 }
 
 pub fn configure(config: &mut ServiceConfig) {
@@ -50,7 +55,7 @@ struct Post<'a> {
 
 impl Component for Post<'_> {
     type Body = NoBody;
-    fn render_to(self, _: NoBody, buffer: &mut String) {
+    fn render_to(self, _body: NoBody, buffer: &mut String) {
         let body = PreEscaped(&self.info.content.0);
         write_html! { buffer =>
             h1 { (self.info.title) }

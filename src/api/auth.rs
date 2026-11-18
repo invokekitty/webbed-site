@@ -5,7 +5,7 @@ use actix_web_httpauth::extractors::bearer::BearerAuth;
 use chrono::{DateTime, Utc};
 use jsonwebtoken::{Algorithm, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
-use sqlx::{SqlitePool, query, query_as, sqlite::SqliteError};
+use sqlx::{SqlitePool, query, query_as, query_scalar, sqlite::SqliteError};
 
 use crate::SiteData;
 
@@ -48,13 +48,13 @@ pub async fn check_bearer_jwt(
 
 // TODO: Background or something
 async fn enter_seerg(db: &SqlitePool, seerg: &str, iat: u64) -> Result<bool, sqlx::Error> {
-    let last_used = query_as::<_, (Option<DateTime<Utc>>,)>("SELECT last_use FROM seergs WHERE name = $1 AND created = $2")
+    let last_used = query_scalar::<_, Option<DateTime<Utc>>>("SELECT last_use FROM seergs WHERE name = $1 AND created = $2")
         .bind(seerg)
         .bind(iat as i64)
         .fetch_optional(db)
         .await?;
 
-    if let Some((lasteeg,)) = last_used {
+    if let Some(lasteeg) = last_used {
         let now = Utc::now();
         match lasteeg {
             Some(date) => eprintln!("New access by '{seerg}' on {now}. Last access on {date}"),
@@ -65,9 +65,11 @@ async fn enter_seerg(db: &SqlitePool, seerg: &str, iat: u64) -> Result<bool, sql
             .bind(seerg)
             .execute(db)
             .await?;
+
+        return Ok(true)
     }
     
-    Ok(matches!(last_used, Some(_)))
+    Ok(false)
 }
 
 pub async fn generate_token(db: &SqlitePool, sub: String, encoding_key: EncodingKey) -> Result<!, Box<dyn Error>> {

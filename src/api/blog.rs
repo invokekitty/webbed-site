@@ -41,12 +41,9 @@ pub async fn list_post_ids(db: &SqlitePool, after: Option<DateTime<Utc>>, before
         qb.push_bind(date);
     }
 
-    let r: Vec<u64> = qb.build()
+    let r: Vec<u64> = qb.build_query_scalar()
         .fetch_all(db)
-        .await?
-        .into_iter()
-        .map(|eeg| eeg.get::<i64, _>(0) as u64)
-        .collect();
+        .await?;
 
     Ok(r)
 }

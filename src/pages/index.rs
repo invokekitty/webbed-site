@@ -1,8 +1,5 @@
-use actix_web::get;
 use cached::once;
 use maud::Markup;
-use maud::Render;
-use maud::attrs;
 use maud::components::Component;
 use maud::components::NoBody;
 #[allow(unused)]
