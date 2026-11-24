@@ -1,6 +1,7 @@
 use std::{error::Error, process::exit, time::Duration};
-
-use actix_web::{dev::ServiceRequest, error::ErrorUnauthorized, web::Data};
+use std::borrow::Borrow;
+use actix_web::{dev::ServiceRequest, error::ErrorUnauthorized, web::Data, HttpMessage};
+use actix_web::web::ReqData;
 use actix_web_httpauth::extractors::bearer::BearerAuth;
 use chrono::{DateTime, Utc};
 use jsonwebtoken::{Algorithm, EncodingKey, Header, Validation};
@@ -18,6 +19,27 @@ struct Claims {
     exp: u64
 }
 
+#[derive(Clone)]
+pub struct TokenOwner(String);
+
+impl Borrow<str> for TokenOwner {
+    fn borrow(&self) -> &str {
+        &self.0
+    }
+}
+
+impl AsRef<str> for TokenOwner {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+
+impl Into<String> for TokenOwner {
+    fn into(self) -> String {
+        self.0
+    }
+}
+
 pub async fn check_bearer_jwt(
     req: ServiceRequest,
     token: BearerAuth
@@ -33,6 +55,7 @@ pub async fn check_bearer_jwt(
     ) {
         Ok(eeg) if let Ok(true) = enter_seerg(&data.database, &eeg.claims.sub, eeg.claims.iat).await => {
             eprintln!("{} is in !!!", &eeg.claims.sub);
+            req.extensions_mut().insert(TokenOwner(eeg.claims.sub));
             Ok(req)
         },
         Ok(unknown_eeg) => {
@@ -98,6 +121,6 @@ pub async fn reject_token(db: &SqlitePool, sub: String) -> Result<!, Box<dyn Err
         .execute(db)
         .await?;
 
-    println!("Rejected token for '{sub}'");
+    println!("Rejected token of '{sub}'");
     exit(0)
 }

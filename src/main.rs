@@ -1,4 +1,4 @@
-#![feature(decl_macro, default_field_values, duration_constructors, duration_constants)]
+#![feature(decl_macro, default_field_values, duration_constructors, duration_constants, never_type)]
 #![feature(path_trailing_sep)]
 #![feature(range_into_bounds)]
 
@@ -77,7 +77,7 @@ async fn main() -> Result<(), Box<dyn Error>>{
                 decoding_key: decode_key.clone()
             }))
             .configure(pages::configure)
-            .configure(api::blog::web::configure)
+            .configure(api::configure)
             .service(styles::style)
             .service(ResourceFiles::new("/assets", generate()))
             .default_service(get().to(pages::_404)))
@@ -127,14 +127,15 @@ async fn init_db(db_path: impl AsRef<Path>) -> Result<SqlitePool, sqlx::Error> {
                 .create_if_missing(true)
                 .foreign_keys(true))
         .await?;
-
     raw_sql(r#"
         CREATE TABLE IF NOT EXISTS posts (
             id INTEGER PRIMARY KEY,
             posted_on INTEGER NOT NULL,
+            author TEXT NOT NULL,
             title TEXT NOT NULL,
             summary TEXT,
-            content BLOB NOT NULL
+            content BLOB NOT NULL,
+            FOREIGN KEY(author) REFERENCES seergs(name)
         );
         CREATE TABLE IF NOT EXISTS comments (
             id INTEGER PRIMARY KEY,
@@ -146,6 +147,7 @@ async fn init_db(db_path: impl AsRef<Path>) -> Result<SqlitePool, sqlx::Error> {
         );
         CREATE TABLE IF NOT EXISTS seergs (
             name TEXT PRIMARY KEY,
+            pfp TEXT,
             created INTEGER NOT NULL,
             last_use INTEGER
         );

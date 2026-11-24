@@ -152,11 +152,15 @@ div.grid {
     }
 }
 
-.project {
+.section {
     padding: 20px;
     background-color: rgba(205, 214, 244, 0.12);
     margin-bottom: 2.5rem;
     position: relative;
+}
+
+.project {
+    @extend .section;
     .deprecated-marker {
         position: absolute;
         top:20px;
@@ -168,6 +172,18 @@ div.grid {
     .delim {
         padding-left: .45rem;
         padding-right: .3rem;
+    }
+}
+
+.post {
+    @extend .section;
+    .post-date {
+        position: absolute;
+        top:20px;
+        right: 20px;
+        @include tiny5;
+        color: $subtext;
+        z-index: 5;
     }
 }
 
@@ -191,6 +207,19 @@ div.grid {
     width: 80vw;
     max-width: 400px !important;
 }
+
+.inline-icon {
+    height: 1em;
+    position: relative;
+    top: .2em;
+}
+
+.post-pfp {
+    border-radius: 10%;
+    margin-right: .25rem;
+}
+
+
 
 @view-transition {
     navigation: auto;

@@ -1,4 +1,4 @@
-use actix_web::{HttpRequest, Responder, Route};
+use actix_web::{HttpRequest, HttpResponse, Responder, Route};
 use actix_web::web::{get, ServiceConfig};
 use maud::{html, Markup};
 use crate::layout::Page;
@@ -31,8 +31,8 @@ pub struct PageInfo {
     additional: Option<fn(&mut ServiceConfig)> = None
 }
 
-pub async fn _404() -> Markup {
-    html! {
+pub async fn _404() -> impl Responder {
+    let body = html! {
         Page title="404 Error" route="" custom-container-class="container404" .. {
             .box404 {
                 h1.text404 { "404!" }
@@ -41,5 +41,8 @@ pub async fn _404() -> Markup {
                 p { "get back on track you " b { "cat" } }
             }
         }
-    }
+    };
+
+    HttpResponse::NotFound()
+        .body(body)
 }

@@ -1,7 +1,9 @@
 use std::{error::Error, hash::Hash, io};
+use actix_web::error::ErrorUnauthorized;
 use brotli::{BrotliCompress, BrotliDecompress, enc::{BrotliEncoderParams, backward_references::BrotliEncoderMode}};
 use cached::{concurrent_cached, once};
 use chrono::{DateTime, Utc};
+use markdown::{CompileOptions, Constructs, ParseOptions};
 use serde::{Deserialize, Serialize};
 use sqlx::QueryBuilder;
 use sqlx::{encode::IsNull, prelude::{FromRow, Type}, query, query_as, sqlite::{SqliteArgumentsBuffer, SqliteQueryResult, SqliteValueRef}, Decode, Encode, Row, Sqlite, SqlitePool};
@@ -12,7 +14,7 @@ use sqlx::{encode::IsNull, prelude::{FromRow, Type}, query, query_as, sqlite::{S
     max_size = 1024
 )]
 pub async fn fetch_post(db_pool: &SqlitePool, id: u64) -> Result<Option<PostData>, sqlx::Error> {
-    query_as("SELECT id, posted_on, title, summary, content FROM posts WHERE id = $1")
+    query_as("SELECT id, posted_on, author, title, summary, content FROM posts WHERE id = $1")
         .bind(id as i64)
         .fetch_optional(db_pool)
         .await
@@ -20,7 +22,7 @@ pub async fn fetch_post(db_pool: &SqlitePool, id: u64) -> Result<Option<PostData
 
 #[once]
 pub async fn get_all_posts(db_pool: &SqlitePool) -> Result<Vec<PostData>, sqlx::Error> {
-    query_as("SELECT id, posted_on, title, summary, content FROM posts")
+    query_as("SELECT id, posted_on, author, title, summary, content FROM posts")
         .fetch_all(db_pool)
         .await
 }
@@ -49,19 +51,20 @@ pub async fn list_post_ids(db: &SqlitePool, after: Option<DateTime<Utc>>, before
 }
 
 pub mod web {
-    use std::error::Error;
     use actix_web::error::{ErrorBadRequest, ErrorInternalServerError, ErrorNotFound};
     use actix_web::{FromRequest, Responder, delete, get, post, put, web};
-    use actix_web::web::{Data, Json, ServiceConfig};
+    use actix_web::web::{Data, Json, ReqData, ServiceConfig};
     use actix_web_httpauth::middleware::HttpAuthentication;
     use chrono::{DateTime, Utc};
     use serde::Deserialize;
     use crate::api::auth;
-    use crate::api::blog::{CompressableText, PostData, fetch_post, list_post_ids};
+    use crate::api::auth::TokenOwner;
+    use crate::api::blog::{fetch_post, get_all_posts, list_post_ids, CompressableText, PostData};
     use crate::SiteData;
 
     pub fn configure(config: &mut ServiceConfig) {
         config.service(web::scope("/api/posts")
+            .service(all_posts)
             .service(list_posts)
             .service(create_post)
             .service(get_post)
@@ -86,6 +89,13 @@ pub mod web {
         Ok(Json(posts))
     }
 
+    #[get("/all")]
+    async fn all_posts(site_data: Data<SiteData>) -> Result<impl Responder, actix_web::Error> {
+        let posts = get_all_posts(&site_data.database).await
+            .map_err(ErrorInternalServerError)?;
+        Ok(Json(posts))
+    }
+
     #[derive(Deserialize)]
     struct CreatePostRequest {
         title: String,
@@ -96,14 +106,16 @@ pub mod web {
     #[post("/new", wrap = "HttpAuthentication::bearer(auth::check_bearer_jwt)")]
     async fn create_post(
         site_data: Data<SiteData>,
+        author: ReqData<TokenOwner>,
         Json(body): Json<CreatePostRequest>
     ) -> Result<impl Responder, actix_web::Error> {
-        let mut post = PostData::new(body.title, body.summary, body.content);
+        let mut post = PostData::new(body.title, &*author, body.summary, body.content);
         post.post(&site_data.database).await?;
+        eprintln!("Created new post");
         Ok(Json(post))
     }
 
-    #[get("/post-{id}")]
+    #[get("/{id}")]
     async fn get_post(id: web::Path<u64>, site_data: Data<SiteData>) -> Result<impl Responder, actix_web::Error> {
         let post = fetch_post(&site_data.database, *id)
             .await
@@ -111,11 +123,12 @@ pub mod web {
         Ok(Json(post))
     }
 
-    #[delete("/post-{id}", wrap = "HttpAuthentication::bearer(auth::check_bearer_jwt)")]
-    async fn delete_post(id: web::Path<u64>, site_data: Data<SiteData>) -> Result<impl Responder, actix_web::Error> {
+    #[delete("/{id}", wrap = "HttpAuthentication::bearer(auth::check_bearer_jwt)")]
+    async fn delete_post(id: web::Path<u64>, site_data: Data<SiteData>, token_owner: ReqData<TokenOwner>) -> Result<impl Responder, actix_web::Error> {
         let mut post = fetch_post(&site_data.database, *id).await
             .map_err(ErrorInternalServerError)?
             .ok_or(ErrorNotFound("This post doesn't exist"))?;
+        post.check_owner(&*token_owner)?;
         post.delete(&site_data.database).await?;
         Ok("Success")
     }
@@ -127,28 +140,34 @@ pub mod web {
         content: Option<String>
     }
 
-    #[put("/post-{id}", wrap = "HttpAuthentication::bearer(auth::check_bearer_jwt)")]
+    #[put("/{id}", wrap = "HttpAuthentication::bearer(auth::check_bearer_jwt)")]
     async fn update_post(
         id: web::Path<u64>,
         site_data: Data<SiteData>,
+        token_owner: ReqData<TokenOwner>,
         Json(body): Json<UpdatePostRequest>
     ) -> Result<impl Responder, actix_web::Error> {
         let mut post = fetch_post(&site_data.database, *id).await
             .map_err(ErrorInternalServerError)?
             .ok_or(ErrorNotFound("This post doesn't exist"))?;
 
+        post.check_owner(&*token_owner)?;
+
         let (mut update_content, mut update_rest) = (false, false);
         if let Some(content) = &body.content {
+            eprintln!("Updating content for post {id}");
             post.content = CompressableText(PostData::parse_markdown(content));
             update_content = true;
         }
 
         if let Some(title) = &body.title {
+            eprintln!("Updating title for post {id}");
             post.title = title.clone();
             update_rest = true;
         }
         if let Some(summary) = &body.summary {
-            post.summary = Some(summary.clone());
+            eprintln!("Updating summary for post {id}");
+            post.summary = if summary.is_empty() { None } else { Some(summary.clone()) };
             update_rest = true;
         }
 
@@ -162,31 +181,50 @@ pub mod web {
 
         Ok("Success")
     }
-}
 
+
+}
 
 #[derive(Clone, FromRow, Type, Serialize, Deserialize)]
 pub struct PostData {
     id: Option<u64>,
     pub posted_on: DateTime<Utc>,
+    pub author: String,
     pub title: String,
     pub summary: Option<String>,
     pub content: CompressableText
 }
 
 impl PostData {
-    pub fn new(title: impl Into<String>, desc: Option<String>, md: impl AsRef<str>) -> Self {
+    pub fn new(title: impl Into<String>, author: impl AsRef<str>, desc: Option<impl AsRef<str>>, md: impl AsRef<str>) -> Self {
         PostData {
             id: None,
+            author: author.as_ref().to_string(),
             posted_on: Utc::now(),
             title: title.into(),
-            summary: desc,
+            summary: desc.map(Self::parse_markdown),
             content: CompressableText(Self::parse_markdown(md))
         }
     }
 
+    pub fn id(&self) -> Option<u64> { self.id }
+
     pub fn parse_markdown(md: impl AsRef<str>) -> String {
-        let md_options = markdown::Options::gfm();
+        let md_options = markdown::Options {
+            parse: ParseOptions {
+                constructs: Constructs {
+                    math_flow: true,
+                    math_text: true,
+                    ..Constructs::gfm()
+                },
+                ..ParseOptions::gfm()
+            },
+            compile: CompileOptions { 
+                allow_dangerous_html: true,
+                ..CompileOptions::default()
+            }
+        };
+        
         markdown::to_html_with_options(md.as_ref(), &md_options).unwrap()
     }
 
@@ -195,8 +233,9 @@ impl PostData {
             return Err("The post already has a database id, use modify methods instead".into());
         }
 
-        let result = query("INSERT INTO posts (posted_on, title, summary, content) VALUES ($1, $2, $3, $4)")
+        let result = query("INSERT INTO posts (posted_on, author, title, summary, content) VALUES ($1, $2, $3, $4, $5)")
             .bind(&self.posted_on)
+            .bind(&self.author)
             .bind(&self.title)
             .bind(&self.summary)
             .bind(&self.content)
@@ -278,6 +317,13 @@ impl PostData {
         }
 
         *GET_ALL_POSTS.write().await = None;
+    }
+
+    pub fn check_owner(&self, token_owner: impl AsRef<str>) -> Result<(), actix_web::Error> {
+        if token_owner.as_ref() == self.author { Ok(()) }
+        else {
+            Err(ErrorUnauthorized("U cant edit someone elses post :c"))
+        }
     }
 }
 

@@ -74,7 +74,7 @@ impl<'a> Component for Project<'a> {
     type Body = MaybeBody<'a>;
     fn render_to(self, body: MaybeBody<'a>, buffer: &mut String) {
         write_html! { buffer =>
-            #(self.id) .project {
+            #(self.id) .project .section {
                 @if self.deprecated {
                     span.deprecated-marker { (Icon::Warning) (NBSP)"Deprecated" }
                 }
